@@ -1,0 +1,46 @@
+
+
+
+
+<form [formGroup]="form" (ngSubmit)="onSubmit()" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; width: 100%; gap: 1rem;">
+
+<p-floatlabel variant="on">
+    <input pTextarea id="on_label" formControlName="nameSubject" autocomplete="off"/>
+    <label for="on_label">Name Subject</label>
+</p-floatlabel>
+
+
+<p-fileupload [showCancelButton]="false" [showUploadButton]="false" name="demo[]" (onSelect)="onUpload($event)"  [multiple]="true" accept="application/pdf" mode="advanced">
+    <ng-template #empty>
+        <div>Drag and drop files to here to upload.</div>
+    </ng-template>
+</p-fileupload>
+<p-toast></p-toast>
+
+
+<p-floatlabel variant="on">
+    <textarea pTextarea id="over_label" formControlName="instructionAi" rows="3" cols="30" style="resize: none" class="h-full"></textarea>
+    <label for="on_label">On Label</label>
+</p-floatlabel>
+
+<p-floatlabel variant="on">
+    <p-datepicker  selectionMode="range" formControlName="date" [readonlyInput]="true" id="on_label"  autocomplete="off" />
+    <label for="on_label">Start Date-End Date</label>
+</p-floatlabel>
+
+<p-floatlabel variant="on">
+    <p-datepicker inputId="calendar-timeonly" formControlName="timePerDay" [timeOnly]="true"  id="on_label"  autocomplete="off" />
+    <label for="on_label">Minutes and Hours per day</label>
+</p-floatlabel>
+
+<p-floatlabel variant="on">
+    <p-datepicker inputId="calendar-timeonly"  formControlName="maxLengthLesson"  [timeOnly]="true"  id="on_label"  autocomplete="off" />
+    <label for="on_label">Max Lenght for 1 lesson</label>
+</p-floatlabel>
+
+
+
+<p-button label="Submit" type="Submit" />
+
+</form>
+

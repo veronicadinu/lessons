@@ -1,0 +1,34 @@
+DROP DATABASE IF EXISTS `one`;
+CREATE DATABASE IF NOT EXISTS `one`;
+USE `one`;
+
+CREATE TABLE IF NOT EXISTS `subjects`(
+`id` INT NOT NULL auto_increment,
+`nameSubject` varchar(250) NOT NULL,
+`instructionAi` varchar(250),
+`startDate` varchar(200) NOT NULL,
+`endDate` varchar(200) NOT NULL,
+`timePerDay` varchar(200) NOT NULL,
+`maxLengthLesson` varchar(200) NOT NULL,
+`userId` varchar(200) NOT NULL,
+PRIMARY KEY (`id`)
+);
+CREATE TABLE IF NOT EXISTS `lessons`(
+`id` INT NOT NULL auto_increment,
+`subjectId` INT NOT NULL,
+`title` varchar(250) NOT NULL,
+`durationMinutes` varchar(200) NOT NULL, 
+`startDate` varchar(200) NOT NULL ,
+`content` text,
+`done` boolean ,
+PRIMARY KEY(`id`),
+FOREIGN KEY (`subjectId`) references `subjects`(`id`) on DELETE CASCADE on update CASCADE
+);
+CREATE TABLE IF NOT EXISTS `files`(
+`id` INT NOT NULL auto_increment,
+`subjectId` INT NOT NULL,
+`fileName` varchar(250) NOT NULL,
+`content` text,
+PRIMARY KEY (`id`),
+FOREIGN KEY(`subjectId`) references `subjects`(`id`) on DELETE cascade on update CASCADE 
+);
