@@ -8,8 +8,8 @@ CREATE TABLE IF NOT EXISTS `subjects`(
 `instructionAi` varchar(250),
 `startDate` varchar(200) NOT NULL,
 `endDate` varchar(200) NOT NULL,
-`timePerDay` varchar(200) NOT NULL,
-`maxLengthLesson` varchar(200) NOT NULL,
+`timePerDay` INT NOT NULL,
+`maxLengthLesson` INT ,
 `userId` varchar(200) NOT NULL,
 PRIMARY KEY (`id`)
 );
@@ -27,8 +27,7 @@ FOREIGN KEY (`subjectId`) references `subjects`(`id`) on DELETE CASCADE on updat
 CREATE TABLE IF NOT EXISTS `files`(
 `id` INT NOT NULL auto_increment,
 `subjectId` INT NOT NULL,
-`fileName` varchar(250) NOT NULL,
-`content` text,
+`content` longtext,
 PRIMARY KEY (`id`),
 FOREIGN KEY(`subjectId`) references `subjects`(`id`) on DELETE cascade on update CASCADE 
 );

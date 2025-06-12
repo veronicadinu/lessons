@@ -9,4 +9,3 @@ export interface AddSubjectRequest {
       maxLengthLesson:number | null |undefined,
       
 }
-

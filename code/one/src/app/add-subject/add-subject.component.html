@@ -10,7 +10,7 @@
 </p-floatlabel>
 
 
-<p-fileupload [showCancelButton]="false" [showUploadButton]="false" name="demo[]" (onSelect)="onUpload($event)"  [multiple]="true" accept="application/pdf" mode="advanced">
+<p-fileupload (onRemove)="onRemove($event)" [showCancelButton]="false" [showUploadButton]="false" (onSelect)="onUpload($event)"  [multiple]="true" accept="application/pdf" mode="advanced">
     <ng-template #empty>
         <div>Drag and drop files to here to upload.</div>
     </ng-template>
@@ -24,23 +24,23 @@
 </p-floatlabel>
 
 <p-floatlabel variant="on">
-    <p-datepicker  selectionMode="range" formControlName="date" [readonlyInput]="true" id="on_label"  autocomplete="off" />
+    <p-datepicker  selectionMode="range" formControlName="date" [readonlyInput]="true"   autocomplete="off" />
     <label for="on_label">Start Date-End Date</label>
 </p-floatlabel>
 
 <p-floatlabel variant="on">
-    <p-datepicker inputId="calendar-timeonly" formControlName="timePerDay" [timeOnly]="true"  id="on_label"  autocomplete="off" />
+    <p-datepicker inputId="calendar-timeonly" formControlName="timePerDay" [timeOnly]="true"  autocomplete="off" />
     <label for="on_label">Minutes and Hours per day</label>
 </p-floatlabel>
 
 <p-floatlabel variant="on">
-    <p-datepicker inputId="calendar-timeonly"  formControlName="maxLengthLesson"  [timeOnly]="true"  id="on_label"  autocomplete="off" />
+    <p-datepicker inputId="calendar-timeonly"  formControlName="maxLengthLesson"  [timeOnly]="true"  autocomplete="off" />
     <label for="on_label">Max Lenght for 1 lesson</label>
 </p-floatlabel>
 
 
 
-<p-button label="Submit" type="Submit" />
+<p-button label="Submit" [disabled]="form.invalid" type="Submit" />
 
 </form>
 

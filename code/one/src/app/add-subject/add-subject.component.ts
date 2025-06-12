@@ -11,10 +11,25 @@ import { MessageService } from 'primeng/api';
 import { CommonModule } from '@angular/common';
 import { DatePickerModule } from 'primeng/datepicker';
 import { ButtonModule } from 'primeng/button';
-import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
+import { ReactiveFormsModule, FormGroup, FormControl, Validators, ValidatorFn, AbstractControl } from '@angular/forms';
+import { SubjectsService } from '../services/subjects.service';
+import { AddSubjectRequest } from '../models/addSubjectRequest';
 
 
+const DateValidator = (control: AbstractControl) => {
+      const value = control.value
 
+      if(!value){
+        return null
+      }
+      if(value.filter((x: any) => x != null).length !== 2){
+        return {
+          wrongDates: value
+        }
+      }
+
+      return null
+  };
 
 function fileToBase64(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -51,12 +66,12 @@ export class AddSubjectComponent implements OnInit {
 
 
     form = new FormGroup({
-      nameSubject: new FormControl('', [Validators.required]),
-      instructionAi: new FormControl('', [Validators.required]),
+      nameSubject: new FormControl<string>('', [Validators.required]),
+      instructionAi: new FormControl<string>('', [Validators.required]),
       files: new FormControl<string[]>([]),
-      date: new FormControl([], [Validators.required]),
-      timePerDay: new FormControl('', [Validators.required]),
-      maxLengthLesson: new FormControl(''),
+      date: new FormControl<Date[]>([], [Validators.required, DateValidator]),
+      timePerDay: new FormControl<Date | undefined>(undefined, [Validators.required]),
+      maxLengthLesson: new FormControl<Date | undefined>(undefined),
       
 
     })
@@ -64,7 +79,7 @@ export class AddSubjectComponent implements OnInit {
 
  
 
-constructor(private messageService: MessageService){}
+constructor(private messageService: MessageService, private subjectService: SubjectsService){}
 
 onUpload(event:any) {
   this.uploadedFiles = [];
@@ -74,6 +89,11 @@ onUpload(event:any) {
         }
 
         this.messageService.add({severity: 'info', summary: 'File Uploaded', detail: ''});
+    }
+
+
+    onRemove(event: any){
+     this.uploadedFiles.splice( this.uploadedFiles.indexOf(event.file) ,1)
     }
 
   
@@ -100,7 +120,29 @@ onUpload(event:any) {
 
    const data = this.form.value
 
+   const sendBk:AddSubjectRequest = {
+    nameSubject: data.nameSubject!,
+
+
+      instructionAi: data.instructionAi,
+      files: data.files,
+      dateStart: data.date![0].toISOString(),
+      dateEnd: data.date![1].toISOString(),
+      timePerDay: data.timePerDay!.getHours() * 60 + data.timePerDay!.getMinutes(),
+      maxLengthLesson: !data.maxLengthLesson ? undefined : data.maxLengthLesson.getHours() * 60 + data.maxLengthLesson.getMinutes()
+
+   }
+
    console.log(data)
+
+   this.subjectService.addSubject(sendBk).subscribe({
+    next: r=>{
+      console.log(r)
+    },
+    error: e=>{
+
+    }
+   })
 
  })()
 

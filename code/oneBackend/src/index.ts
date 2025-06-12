@@ -9,6 +9,7 @@ import jwksRsa from "jwks-rsa";
 import { Request, Response, NextFunction } from "express";
 
 import {readFileSync} from "fs";
+import { AddSubjectRequest } from "./models/addSubjectRequest";
 
 
 const app = express();
@@ -87,6 +88,46 @@ app.get('/api/subjectsAll', async (req: AuthenticatedRequest, res: Response): Pr
 
   }catch(error){
     console.log("Error fetching subjects:", error)
+    res.status(500).send({message: "Server error"})
+  }
+})
+
+
+app.post('/api/addSubject', async (req: AuthenticatedRequest, res: Response): Promise<void>=>{
+
+
+  try{
+
+    const userId = req.userAuth?.sub
+    const {nameSubject,instructionAi, dateEnd,dateStart,files,maxLengthLesson,timePerDay} = req.body as AddSubjectRequest
+
+    if(!userId) {
+    res.status(400).send({message: "User ID not found in token"})
+    return
+   }
+
+   if(!nameSubject  || !dateEnd || !dateStart || !timePerDay ) {
+     res.status(400).send({message: 'Missing required fields'})
+     return
+   }
+
+
+  const rezultatsubjectId =  await baza.execute("INSERT INTO subjects (nameSubject, instructionAi, startDate, endDate , timePerDay,  maxLengthLesson, userId) VALUES (?,?,?,?,?,?,?)",
+     [nameSubject, instructionAi || null, dateStart, dateEnd, timePerDay,  maxLengthLesson || null, userId])
+
+       const subjectId =  (rezultatsubjectId[0] as any).insertId
+
+       if(files && files.length > 0 ){
+
+        for (let f of files){
+          await baza.execute("INSERT INTO files(subjectId, content) VALUES (?,?)", [subjectId, f])
+        }
+       }
+
+     res.status(201).send({ message: 'Subject added successfully'})
+     
+  }catch(error){
+    console.log("DB Insert Error:", error)
     res.status(500).send({message: "Server error"})
   }
 })

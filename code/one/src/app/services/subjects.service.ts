@@ -1,5 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { AddSubjectRequest } from '../models/addSubjectRequest';
+import { AddSubjectResponse } from '../models/addSubjectResponse';
 
 @Injectable({
   providedIn: 'root'
@@ -13,8 +15,8 @@ export class SubjectsService {
    }
 
    
-   addSubject(body: any){
-    return this.http.post('/api/addSubject', body)
+   addSubject(body: AddSubjectRequest){
+    return this.http.post<AddSubjectResponse>('/api/addSubject', body)
    }
 
 
