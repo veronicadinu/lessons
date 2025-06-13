@@ -1,6 +1,6 @@
 export interface AddSubjectRequest {
 
-    nameSubject: string, 
+      nameSubject: string, 
       instructionAi: string | null |undefined,
       files: string[] | null |undefined,
       dateStart: string,

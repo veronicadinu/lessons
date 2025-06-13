@@ -1,3 +1,40 @@
- <p-button label="Add" icon="pi pi-plus" iconPos="right"  [routerLink]="['/addSubject']"/>
 
-    <p>{{respons}}</p>
+   <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; width: 100%;">
+
+   <h3>Subjects</h3>
+
+       <div *ngFor="let r of respons; let i=index;" >
+
+   <p-card [style]="{ width: '25rem', overflow: 'hidden', padding:'10px', marginBottom: '10px' }">
+    
+    <ng-template  #subtitle> <a [routerLink]="['/subject/', r.id]">{{r.nameSubject}}</a>  </ng-template>
+
+    
+  
+    <ng-template #footer>
+        <div style="display: flex; justify-content: end;">
+            <p-button (click)="deleteSubject(r.id)" icon="pi pi-times" severity="danger" />
+        </div>
+    </ng-template>
+</p-card>
+
+
+    </div>
+
+    <div>
+       <p-button label="Add" icon="pi pi-plus" iconPos="right"  [routerLink]="['/addSubject']"/>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+   </div>
+
+    

@@ -6,10 +6,33 @@ import mysql from "mysql2/promise"
 
 import {expressjwt} from "express-jwt";
 import jwksRsa from "jwks-rsa";
-import { Request, Response, NextFunction } from "express";
+import { Request, Response } from "express";
 
-import {readFileSync} from "fs";
 import { AddSubjectRequest } from "./models/addSubjectRequest";
+import {pdfToText} from 'pdf-ts';
+import { Readable } from 'stream';
+
+//base64 to stream 
+function frombase64tostream( base64: string){
+  const buffer = Buffer.from(base64, 'base64');
+  const stream = Readable.from(buffer);
+  return stream
+  
+}
+
+// pdf-parse expects a Buffer, so we collect stream first
+// stream to text 
+const getTextFromStream = async (stream: NodeJS.ReadableStream) => {
+  const chunks: Buffer[] = [];
+
+  for await (const chunk of stream) {
+    chunks.push(chunk as Buffer);
+  }
+
+  const buffer = Buffer.concat(chunks);
+  const data = await pdfToText(buffer);
+  return data;
+};
 
 
 const app = express();
@@ -95,7 +118,6 @@ app.get('/api/subjectsAll', async (req: AuthenticatedRequest, res: Response): Pr
 
 app.post('/api/addSubject', async (req: AuthenticatedRequest, res: Response): Promise<void>=>{
 
-
   try{
 
     const userId = req.userAuth?.sub
@@ -117,12 +139,25 @@ app.post('/api/addSubject', async (req: AuthenticatedRequest, res: Response): Pr
 
        const subjectId =  (rezultatsubjectId[0] as any).insertId
 
+       const listaFiles: string[] = []
+
        if(files && files.length > 0 ){
 
         for (let f of files){
-          await baza.execute("INSERT INTO files(subjectId, content) VALUES (?,?)", [subjectId, f])
+          
+          const stream = frombase64tostream(f)
+
+          const text = await getTextFromStream(stream)
+          
+          listaFiles.push(text)
+             
+          await baza.execute("INSERT INTO files(subjectId, content) VALUES (?,?)", [subjectId, text])
         }
        }
+
+       //Gemini
+
+       
 
      res.status(201).send({ message: 'Subject added successfully'})
      
@@ -130,6 +165,30 @@ app.post('/api/addSubject', async (req: AuthenticatedRequest, res: Response): Pr
     console.log("DB Insert Error:", error)
     res.status(500).send({message: "Server error"})
   }
+})
+
+
+app.delete('/api/delete/:id', async (req: AuthenticatedRequest, res: Response): Promise<void>=>{
+
+ 
+  try{
+
+   const subjectId = req.params.id
+
+   console.log(subjectId)
+
+   if(!subjectId){
+       res.status(400).send({ message: 'Subject ID is required' });
+       return; }
+
+    await baza.execute('DELETE FROM subjects WHERE id=?', [subjectId])
+    res.status(200).send({message: 'Subject deleted successfully'})
+
+  }catch(error){
+    res.status(500).send({message: 'Server error'})
+      console.error('Error deleting subject:', error);
+  }
+  
 })
 
 

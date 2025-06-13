@@ -14,6 +14,7 @@ import { ButtonModule } from 'primeng/button';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators, ValidatorFn, AbstractControl } from '@angular/forms';
 import { SubjectsService } from '../services/subjects.service';
 import { AddSubjectRequest } from '../models/addSubjectRequest';
+import { Router } from '@angular/router';
 
 
 const DateValidator = (control: AbstractControl) => {
@@ -79,7 +80,7 @@ export class AddSubjectComponent implements OnInit {
 
  
 
-constructor(private messageService: MessageService, private subjectService: SubjectsService){}
+constructor(private messageService: MessageService, private subjectService: SubjectsService, private route: Router){}
 
 onUpload(event:any) {
   this.uploadedFiles = [];
@@ -138,6 +139,7 @@ onUpload(event:any) {
    this.subjectService.addSubject(sendBk).subscribe({
     next: r=>{
       console.log(r)
+      this.route.navigate(['/subjects'])
     },
     error: e=>{
 
