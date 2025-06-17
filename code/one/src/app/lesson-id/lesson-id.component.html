@@ -36,7 +36,10 @@
      
             <div>
                  <p>Mark as done:</p>
-             <p-togglebutton  [(ngModel)]="checked"  [onIcon]="'pi pi-check'" [offIcon]="'pi pi-times'" class="ng-invalid ng-dirty" styleClass="w-full sm:w-40" aria-label="Confirmation" />
+                 @if(lesson){
+          <p-togglebutton  [(ngModel)]="lesson!.done"  [onIcon]="'pi pi-check'" [offIcon]="'pi pi-times'" class="ng-invalid ng-dirty" styleClass="w-full sm:w-40" aria-label="Confirmation" />
+                 }
+             
             </div>
             
             <br>

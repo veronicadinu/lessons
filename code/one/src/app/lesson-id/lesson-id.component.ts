@@ -22,8 +22,6 @@ export class LessonIdComponent implements OnInit {
   idLesson!: number
 
 
- checked: boolean = false;
-
   constructor(public subjectService: SubjectsService, public route: ActivatedRoute){}
 
 
@@ -36,7 +34,6 @@ export class LessonIdComponent implements OnInit {
     this.subjectService.getLessonbyId(this.idLesson).subscribe({
       next: (data)=>{
         this.lesson = data
-        this.checked = data.done
       },
       error: (error)=>{ console.error('Error fetching lessons data:', error); }
     }

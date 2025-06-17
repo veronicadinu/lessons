@@ -360,7 +360,7 @@ app.put('/api/lesson/edit/:id', async (req: AuthenticatedRequest, res: Response)
 
     const body = req.body as Lesson
 
-    await baza.execute(`UPDATE lessons SET content=?, summary=? WHERE id=?`, [body.content, body.summary, id])
+    await baza.execute(`UPDATE lessons SET content=?, summary=?, done=? WHERE id=?`, [body.content, body.summary, body.done, id])
 
     res.status(200).send({message: 'Success'})
 
