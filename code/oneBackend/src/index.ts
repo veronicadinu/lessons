@@ -11,6 +11,11 @@ import { Request, Response } from "express";
 import { AddSubjectRequest } from "./models/addSubjectRequest";
 import {pdfToText} from 'pdf-ts';
 import { Readable } from 'stream';
+import { GoogleGenAI } from "@google/genai";
+import { AiLesson } from "./models/AiLesson";
+import { Lesson } from "./models/Lesson";
+import { Subject } from "./models/subject";
+import {File} from './models/file'
 
 //base64 to stream 
 function frombase64tostream( base64: string){
@@ -67,6 +72,8 @@ const baza = mysql.createPool({
     queueLimit: 0 ,
     timezone: "Z", // PT data in sql ,This 'Z' means UTC in MySQL2
 });
+
+const ai = new GoogleGenAI({apiKey: process.env.GEMINIKEY})
 
 interface AuthenticatedRequest extends Request {
    userAuth?: {
@@ -157,9 +164,52 @@ app.post('/api/addSubject', async (req: AuthenticatedRequest, res: Response): Pr
 
        //Gemini
 
-       
+         const response = await ai.models.generateContent({
+          model: "gemini-2.0-flash",
+          contents: `    
+          
+          Act as a teacher. I want to learn the subject: ${nameSubject}. 
+          ${instructionAi? "follow these instructions:"+ instructionAi : ""}
+          ${listaFiles.length > 0 ? "here is some documentation files: \n  "+ listaFiles.join("\n\n\n\n") : ""}
+          
 
-     res.status(201).send({ message: 'Subject added successfully'})
+
+          Create a lesson plan between ${dateStart} and ${dateEnd}.
+          I can spend ${timePerDay} minutes evry day. Not more.
+          ${maxLengthLesson? "Make sure max length for a lesson doesn't exceed "+ maxLengthLesson + ' minutes' : ""} 
+          If time is limited, make sure you cover all the important topics first, simplified. The lessons must cover as much of the information as possible, end to end.
+
+
+          Return a list of lesson titles, their duration in minutes, the date of the lesson in ISO format.
+          The list of lessons should be in order.
+          Return ONLY a json array. Do not attempt to use any other words or phrases other than the json string.
+
+          json format: 
+
+          Lesson = {"title": string, "duration": number, "date": string}
+
+          Return: array<Lesson>
+
+          
+          
+          
+          `,
+       });
+
+
+          const responseBetter = response.text!.replaceAll("```json", "").replaceAll("```", "")
+
+          const arrayLessons: AiLesson[] = JSON.parse(responseBetter)
+
+       console.log(arrayLessons)
+
+
+       for(let lesson of arrayLessons){
+        await baza.execute("INSERT INTO lessons(subjectId, title, durationMinutes, date, content, done) values (?,?,?,?,?,?)", [subjectId, 
+          lesson.title, lesson.duration, lesson.date, null, false])
+       }
+
+     res.status(201).send({ message: 'Subject added successfully', id: subjectId})
      
   }catch(error){
     console.log("DB Insert Error:", error)
@@ -173,7 +223,7 @@ app.delete('/api/delete/:id', async (req: AuthenticatedRequest, res: Response): 
  
   try{
 
-   const subjectId = req.params.id
+   const subjectId = +req.params.id
 
    console.log(subjectId)
 
@@ -189,6 +239,88 @@ app.delete('/api/delete/:id', async (req: AuthenticatedRequest, res: Response): 
       console.error('Error deleting subject:', error);
   }
   
+})
+
+
+app.get('/api/subject/:id', async (req: AuthenticatedRequest, res: Response)=>{
+
+  const id = +req.params.id
+
+  const [subject]= await baza.execute(`SELECT * FROM subjects WHERE id=?`, [id])
+
+  if((subject as any ).length === 0 ){
+    res.status(404).send({message: 'Not found'})
+  }
+
+  res.status(200).send((subject as any)[0] )
+
+
+})
+
+app.get('/api/lessons/subjectId/:id', async (req: AuthenticatedRequest, res: Response)=>{
+
+  const Subjectid = +req.params.id
+
+  const [lessons]= await baza.execute(`SELECT * FROM lessons WHERE subjectId=?`, [Subjectid])
+
+  res.status(200).send(lessons)
+
+
+})
+
+app.get('/api/lesson/:id', async(req: AuthenticatedRequest, res: Response)=>{
+
+try{
+  const id = req.params.id
+
+  const [rows]: any = await baza.execute(`SELECT * FROM lessons WHERE id=? `, [id])
+
+  const lesson = rows[0] as Lesson;
+
+  if (lesson.content == null){
+
+    const [subjectRows]: any = await baza.execute(`SELECT * FROM subjects WHERE id=?`, [lesson.subjectId])
+
+    const subject = subjectRows[0] as Subject
+
+    const [fileRows]: any = await baza.execute(`SELECT * FROM files WHERE subjectId=?`, [lesson.subjectId])
+
+    const file = fileRows as File[]
+
+
+      const resposeAI = await ai.models.generateContent({
+      model: "gemini-2.0-flash", 
+          contents: `
+          
+           Act as a teacher. You are preparing a lesson for the subject : ${subject.nameSubject}. The title of the lessson is ${lesson.title}.
+
+                     ${subject.instructionAi? "follow these instructions:"+ subject.instructionAi : ""}
+                     ${file.length > 0 ? "here is some documentation files: \n  "+ file.map(x => x.content).join("\n\n\n\n") : ""}
+
+
+           Create the content based on the duration MINUTES : ${lesson.durationMinutes} 
+          `
+  })
+
+  const content = resposeAI.text
+
+  await baza.execute(`UPDATE lessons SET content=? WHERE id=? `, [content, id])
+
+  lesson.content = content || null
+
+  }
+
+
+
+res.status(201).send(lesson)
+
+
+}catch(error){
+
+    console.log("DB Read Error:", error)
+    res.status(500).send({message: "Server error"})
+
+}
 })
 
 

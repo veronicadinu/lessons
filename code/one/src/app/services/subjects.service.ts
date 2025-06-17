@@ -4,6 +4,7 @@ import { AddSubjectRequest } from '../models/addSubjectRequest';
 import { AddSubjectResponse } from '../models/addSubjectResponse';
 import { Observable } from 'rxjs';
 import { SubjectInterface } from '../models/subject';
+import { Lesson } from '../models/lesson';
 
 @Injectable({
   providedIn: 'root'
@@ -26,7 +27,15 @@ export class SubjectsService {
     return this.http.delete(`/api/delete/${id}`)
    }
 
+
+    getSubjetId(id:number){
+      return this.http.get<SubjectInterface>(`/api/subject/${id}`)
+    }
    
+
+    getLessonsbysubjectId(id:number){
+      return this.http.get<Lesson[]>(`/api/lessons/subjectId/${id}`)
+    }
 
 
 }

@@ -20,6 +20,7 @@ CREATE TABLE IF NOT EXISTS `lessons`(
 `durationMinutes` INT NOT NULL, 
 `date` varchar(200) NOT NULL ,
 `content` text,
+`summary` text,
 `done` boolean ,
 PRIMARY KEY(`id`),
 FOREIGN KEY (`subjectId`) references `subjects`(`id`) on DELETE CASCADE on update CASCADE

@@ -1,1 +1,17 @@
-<p>subject-id works!</p>
+
+
+
+<p>{{subject}}</p>
+
+
+<div>
+    <ul>Lessons</ul>
+
+    <li *ngFor="let l of lessons; let i = index">  <a [routerLink]="['/lesson/', l.id]"> {{l.title}}</a>  </li>
+</div>
+
+
+<p-button label="Test Me" />
+
+
+
