@@ -141,8 +141,8 @@ onUpload(event:any) {
       console.log(r)
       this.route.navigate(['/subjects'])
     },
-    error: e=>{
-
+    error: error=>{
+            console.error('Error fetching lessons data:', error);
     }
    })
 

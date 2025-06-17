@@ -277,7 +277,7 @@ try{
 
   const lesson = rows[0] as Lesson;
 
-  if (lesson.content == null){
+  if (lesson.content == null || lesson.summary == null){
 
     const [subjectRows]: any = await baza.execute(`SELECT * FROM subjects WHERE id=?`, [lesson.subjectId])
 
@@ -288,25 +288,53 @@ try{
     const file = fileRows as File[]
 
 
-      const resposeAI = await ai.models.generateContent({
+      const resposeAI = ai.models.generateContent({
       model: "gemini-2.0-flash", 
           contents: `
           
-           Act as a teacher. You are preparing a lesson for the subject : ${subject.nameSubject}. The title of the lessson is ${lesson.title}.
+           You are teaching a lesson for the subject : ${subject.nameSubject}. The title of the lessson is ${lesson.title}.
 
-                     ${subject.instructionAi? "follow these instructions:"+ subject.instructionAi : ""}
-                     ${file.length > 0 ? "here is some documentation files: \n  "+ file.map(x => x.content).join("\n\n\n\n") : ""}
+                     ${subject.instructionAi ? "follow these instructions if exists:"+ subject.instructionAi : ""}
 
 
-           Create the content based on the duration MINUTES : ${lesson.durationMinutes} 
+                     ${file.length > 0 ? "Reference the following documentation files: \n  "+ file.map(x => x.content).join("\n\n\n\n") : ""}
+
+
+
+           Develop a well-structured lesson content that can be delivered in no more than ${lesson.durationMinutes} minutes.
+           Be clear, engaging, and informative.
+           Format the output as HTML, with no html tag, head or body included.
           `
   })
 
-  const content = resposeAI.text
 
-  await baza.execute(`UPDATE lessons SET content=? WHERE id=? `, [content, id])
+  const resposeAiSummery = ai.models.generateContent({
+      model: "gemini-2.0-flash", 
+          contents: `You are teaching a lesson for the subject : ${subject.nameSubject}.
+                      The title of the lessson is ${lesson.title}.
+
+
+                       ${subject.instructionAi ? "follow these instructions if exists:"+ subject.instructionAi : ""}
+
+
+                     ${file.length > 0 ? "Reference the following documentation files: \n  "+ file.map(x => x.content).join("\n\n\n\n") : ""}
+
+
+                      Generate a clear and concise lesson summary with only the principal ideas that can be understood in exactly one minute. If appropriate, include a high-level lesson skeleton or outline.
+                      Be clear, engaging, and informative. Keep your reply short and to the point.
+                      Format the output as HTML, with no html tag, head or body included.
+                      ` 
+  })
+
+  const [summaryResponse, contentResponse] = await Promise.all([resposeAiSummery, resposeAI]);
+
+  const summary = summaryResponse.text?.replaceAll('```html', '').replaceAll('```', '')
+  const content = contentResponse.text?.replaceAll('```html', '').replaceAll('```', '')
+
+  await baza.execute(`UPDATE lessons SET content=?, summary=? WHERE id=? `, [content, summary, id])
 
   lesson.content = content || null
+  lesson.summary = summary || null
 
   }
 
@@ -321,6 +349,30 @@ res.status(201).send(lesson)
     res.status(500).send({message: "Server error"})
 
 }
+})
+
+
+
+app.put('/api/lesson/edit/:id', async (req: AuthenticatedRequest, res: Response)=>{
+  try{
+
+    const id = +req.params.id
+
+    const body = req.body as Lesson
+
+    await baza.execute(`UPDATE lessons SET content=?, summary=? WHERE id=?`, [body.content, body.summary, id])
+
+    res.status(200).send({message: 'Success'})
+
+    
+
+    
+
+  }catch(error){
+     res.status(500).send({message: 'Server error'})
+      console.error('Error updating lesson:', error);
+
+  }
 })
 
 

@@ -5,5 +5,6 @@ export interface Lesson {
     durationMinutes: number,
     date: string,
     content: string | null,
+    summary: string | null,
     done: boolean
 }

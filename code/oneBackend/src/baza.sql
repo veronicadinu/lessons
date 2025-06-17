@@ -19,8 +19,8 @@ CREATE TABLE IF NOT EXISTS `lessons`(
 `title` varchar(250) NOT NULL,
 `durationMinutes` INT NOT NULL, 
 `date` varchar(200) NOT NULL ,
-`content` text,
-`summary` text,
+`content` longtext,
+`summary` longtext,
 `done` boolean ,
 PRIMARY KEY(`id`),
 FOREIGN KEY (`subjectId`) references `subjects`(`id`) on DELETE CASCADE on update CASCADE

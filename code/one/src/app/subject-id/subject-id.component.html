@@ -7,7 +7,7 @@
 <div>
     <ul>Lessons</ul>
 
-    <li *ngFor="let l of lessons; let i = index">  <a [routerLink]="['/lesson/', l.id]"> {{l.title}}</a>  </li>
+    <li *ngFor="let l of lessons; let i = index">  <a [routerLink]="['/lesson/', l.id]"> {{l.title}} - {{l.durationMinutes}} min.</a>  </li>
 </div>
 
 

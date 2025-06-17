@@ -16,11 +16,9 @@ export class SubjectIdComponent implements OnInit {
 
   subject: string = ""
 
-  lessonId!: number 
+  subjectId!: number 
 
   lessons : Lesson[]= []
-
-  subjectId!: number
 
  
 
@@ -32,35 +30,29 @@ export class SubjectIdComponent implements OnInit {
     //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
     //Add 'implements OnInit' to the class.
 
-    this.lessonId = Number(this.route.snapshot.paramMap.get("id")) 
+    this.subjectId = Number(this.route.snapshot.paramMap.get("id")) 
 
-    this.serverSubject.getSubjetId(this.lessonId).subscribe(
-      data =>{
-        console.log('Subject data:', data); 
+   
+        this.serverSubject.getLessonsbysubjectId(this.subjectId).subscribe({
+          next: (data)=>{
+
+           console.log('Lesson data:', data)
+           this.lessons = data
+
+          },
+          error: (error)=>{console.error('Error fetching lessons data:', error);}
+        })
+
+    this.serverSubject.getSubjetId(this.subjectId).subscribe({
+      next: (data)=>{
+
+       console.log('Subject data:', data); 
         this.subject = data.nameSubject
-        this.subjectId = data.id;
 
 
-        
-    this.serverSubject.getLessonsbysubjectId(this.subjectId).subscribe(
-      data=>{
-          console.log('Lesson data:', data)
-          this.lessons = data
-    },
-
-    error =>{
-       console.error('Error fetching lessons data:', error);
-    }
-  
-  )
       },
-
-      error=>{
-        console.error('Error fetching subject data:', error);
-      }
-
-      
-    )
+      error: (error)=>{console.error('Error fetching subject data:', error);}
+    })
 
     
 

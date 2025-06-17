@@ -4,6 +4,6 @@ export interface Lesson {
     durationMinutes: number,
     date: string,
     content: string,
-    summery: string,
+    summary: string,
     done: boolean
-}
+} 

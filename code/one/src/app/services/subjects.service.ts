@@ -13,7 +13,7 @@ export class SubjectsService {
 
   constructor(private http: HttpClient) { }
 
-   getSubjectsAll(): Observable<SubjectInterface[]>{
+   getSubjectsAll(){
     return this.http.get<SubjectInterface[]>('/api/subjectsAll')  //token added by interceptor
    }
 
@@ -35,6 +35,15 @@ export class SubjectsService {
 
     getLessonsbysubjectId(id:number){
       return this.http.get<Lesson[]>(`/api/lessons/subjectId/${id}`)
+    }
+
+    getLessonbyId(id: number){
+      return this.http.get<Lesson>(`/api/lesson/${id}`)
+    }
+
+
+    updateLessonbyId(id: number, body: Lesson){
+         return this.http.put(`/api/lesson/edit/${id}`, body)
     }
 
 

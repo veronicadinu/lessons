@@ -1,1 +1,46 @@
-<p>lesson-id works!</p>
+
+
+<div class="card">
+    <p-panel [toggleable]="true">
+        <ng-template #header>
+            <div class="flex items-center gap-2">
+                <span class="font-bold">{{lesson?.title}}</span> - <span> {{lesson?.durationMinutes}}minutes</span>
+            </div>
+        </ng-template>
+
+        @if(lesson){
+          <p-editor [(ngModel)]="lesson!.summary"  />
+        }
+
+            
+       
+     
+    </p-panel>
+</div>
+
+
+<p-accordion>
+    <p-accordion-panel  value="0">
+        <p-accordion-header>If you want to see the hole lesson. Click here...</p-accordion-header>
+        <p-accordion-content>
+               @if(lesson){
+          <p-editor [(ngModel)]="lesson!.content" />
+        }
+        </p-accordion-content>
+
+    </p-accordion-panel>
+
+
+    <div>
+        
+     
+            <div>
+                 <p>Mark as done:</p>
+             <p-togglebutton  [(ngModel)]="checked"  [onIcon]="'pi pi-check'" [offIcon]="'pi pi-times'" class="ng-invalid ng-dirty" styleClass="w-full sm:w-40" aria-label="Confirmation" />
+            </div>
+            
+            <br>
+             <p-button (click)="clickEditButton()" label="Save Edit" />
+        
+    </div>
+
