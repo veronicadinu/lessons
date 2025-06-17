@@ -1,0 +1,23 @@
+<p-toolbar>
+    <ng-template #start>
+        <p-button icon="pi pi-home" class="mr-2" text severity="secondary" />
+        <p-button icon="pi pi-print" class="mr-2" text severity="secondary" />
+        <p-button icon="pi pi-upload" text severity="secondary" />
+        <p-button icon="pi pi-plus" text severity="secondary" />
+        
+    </ng-template>
+ 
+    <ng-template #end> 
+        @if (user){
+          <button (click)="logout()"> Logout </button>
+        }  
+
+        @if(!user){
+            <button (click)="login()"> Login </button>
+        }
+      <p-chip [label]="user?.name || 'User'" [image]="user?.picture ? user?.picture : '/assets/default-avatar.webp'" alt="Avatar image" />
+
+    </ng-template>
+
+</p-toolbar>
+

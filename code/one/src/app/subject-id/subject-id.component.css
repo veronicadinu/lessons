@@ -1,0 +1,8 @@
+::ng-deep .fc .fc-daygrid-event{
+    white-space: normal !important;
+    overflow: visible !important;
+    height: auto !important;
+    cursor: pointer;
+    
+    
+}

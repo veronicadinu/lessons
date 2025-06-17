@@ -1,0 +1,27 @@
+
+
+
+<p>{{subject}}</p>
+
+
+<div>
+    <ul>Lessons</ul>
+
+    <li *ngFor="let l of lessons; let i = index">  <a [routerLink]="['/lesson/', l.id]"> {{l.title}} - {{l.durationMinutes}} min.</a>  </li>
+</div>
+
+
+
+
+
+<full-calendar [options]="calendarOptions"></full-calendar>
+
+@if(allDone){
+<p-button label="Test Me" />
+}
+
+
+
+
+
+
