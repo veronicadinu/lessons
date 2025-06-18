@@ -2,10 +2,9 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AddSubjectRequest } from '../models/addSubjectRequest';
 import { AddSubjectResponse } from '../models/addSubjectResponse';
-import { Observable } from 'rxjs';
 import { SubjectInterface } from '../models/subject';
 import { Lesson } from '../models/lesson';
-
+import { Quiz } from '../models/quiz';
 @Injectable({
   providedIn: 'root'
 })
@@ -44,6 +43,15 @@ export class SubjectsService {
 
     updateLessonbyId(id: number, body: Lesson){
          return this.http.put(`/api/lesson/edit/${id}`, body)
+    }
+
+    
+    getQuizzesbySubjectId(id:number){
+      return this.http.get<Quiz[]>(`/api/quizzes/subjectId/${id}'`)
+    }
+
+    addQuizbySubjectId(id: number, body:any=null){
+      return this.http.post<any>(`/api/addQuiz/${id}`, body)
     }
 
 

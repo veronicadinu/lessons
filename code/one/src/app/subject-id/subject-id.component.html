@@ -3,9 +3,11 @@
 
 <p>{{subject}}</p>
 
+
+
 <ul>Lessons </ul>
   @for (l of lessons; track l.id) {
-    <li>{{ l.title}} - {{l.durationMinutes}} min</li>
+    <li [routerLink]="['/lesson/' + l.id]" >{{ l.title}} - {{l.durationMinutes}} min</li>
   }
 
 
@@ -13,8 +15,17 @@
 <full-calendar [options]="calendarOptions"></full-calendar>
 
 @if(allDone){
-<p-button label="Test Me" />
+<p-button label="Test Me"  (click)="clickquiz()" />
+
+@for(q of quizzes; track q.id){
+    <p-listbox [options]="[q]" [routerLink]="['/quiz/' + q.id]"  optionLabel="title" class="w-full md:w-56" />
 }
+
+}
+
+
+
+
 
 
 

@@ -68,7 +68,7 @@ export class AddSubjectComponent implements OnInit {
 
     form = new FormGroup({
       nameSubject: new FormControl<string>('', [Validators.required]),
-      instructionAi: new FormControl<string>('', [Validators.required]),
+      instructionAi: new FormControl<string>(''),
       files: new FormControl<string[]>([]),
       date: new FormControl<Date[]>([], [Validators.required, DateValidator]),
       timePerDay: new FormControl<Date | undefined>(undefined, [Validators.required]),

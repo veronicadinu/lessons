@@ -9,11 +9,12 @@ import { MenuModule } from 'primeng/menu';
 import { CommonModule } from '@angular/common';
 import { SpeedDialModule } from 'primeng/speeddial';
 import { MenuItem } from 'primeng/api';
+import { RouterModule } from '@angular/router';
 
 
 @Component({
   selector: 'app-top',
-  imports: [ToolbarModule, ButtonModule, AvatarModule, ChipModule, MenuModule, CommonModule, SpeedDialModule  ],
+  imports: [ToolbarModule, ButtonModule, AvatarModule, ChipModule, MenuModule, CommonModule, SpeedDialModule,RouterModule],
   templateUrl: './top.component.html',
   styleUrl: './top.component.css'
 })

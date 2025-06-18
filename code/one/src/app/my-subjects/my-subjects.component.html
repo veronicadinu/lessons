@@ -28,8 +28,28 @@
 
 
 
+<p-card  [style]="{ height: '100%', widthL: '100%' }">
+
+@for(r of respons; track r.id){
 
 
+<div  style="display: flex; flex-direction: row; align-items: center; justify-content: space-between; width: 100%;">
+    <a [routerLink]="['/subject/', r.id]" style="width: 80%; padding-bottom: 10px;" >
+     <p-listbox [options]="[r]"  optionLabel="nameSubject" class="w-full md:w-56" />
+    </a>
+   
+    <div >
+    <p-button (click)="deleteSubject(r.id)" icon="pi pi-times" severity="danger" />
+    </div>
+  
+</div>
+}
+
+    
+</p-card>
+
+
+ 
 
 
 

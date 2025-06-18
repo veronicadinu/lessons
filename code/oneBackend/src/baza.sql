@@ -44,12 +44,12 @@ FOREIGN KEY(`subjectId`) references `subjects`(`id`) on delete cascade on update
 
 CREATE TABLE IF NOT EXISTS `questions`(
 `id` int not null auto_increment,
-`content` text,
-`a` text,
-`b` text,
-`c` text,
-`d` text,
-`corectAnswer` text,
+`content` longtext not null,
+`a` longtext not null,
+`b` longtext not null,
+`c` longtext not null,
+`d` longtext not null,
+`correctLetter` text not null,
 `answer` text,
 `quizId` INT NOT NULL,
 PRIMARY KEY (`id`),

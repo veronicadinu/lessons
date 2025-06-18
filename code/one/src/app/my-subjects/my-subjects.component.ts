@@ -6,10 +6,12 @@ import { CardModule } from 'primeng/card';
 import { CommonModule } from '@angular/common';
 import { SubjectInterface } from '../models/subject';
 
+import { ListboxModule } from 'primeng/listbox';
+
 
 @Component({
   selector: 'app-my-subjects',
-  imports: [ButtonModule, RouterModule, CardModule,CommonModule],
+  imports: [ButtonModule, RouterModule, CardModule,CommonModule,ListboxModule],
   templateUrl: './my-subjects.component.html',
   styleUrl: './my-subjects.component.css'
 })
