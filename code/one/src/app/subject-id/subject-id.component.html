@@ -3,14 +3,10 @@
 
 <p>{{subject}}</p>
 
-
-<div>
-    <ul>Lessons</ul>
-
-    <li *ngFor="let l of lessons; let i = index">  <a [routerLink]="['/lesson/', l.id]"> {{l.title}} - {{l.durationMinutes}} min.</a>  </li>
-</div>
-
-
+<ul>Lessons </ul>
+  @for (l of lessons; track l.id) {
+    <li>{{ l.title}} - {{l.durationMinutes}} min</li>
+  }
 
 
 
