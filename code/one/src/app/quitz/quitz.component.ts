@@ -5,15 +5,18 @@ import { Questions } from '../models/questions';
 import { Quiz } from '../models/quiz';
 import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 
 
 import { StepperModule } from 'primeng/stepper';
 import { ButtonModule } from 'primeng/button';
 import { ListboxModule } from 'primeng/listbox';
 
+import { DialogModule } from 'primeng/dialog';
+
 @Component({
   selector: 'app-quitz',
-  imports: [DatePipe,StepperModule,ButtonModule,ListboxModule,FormsModule],
+  imports: [DatePipe,StepperModule,ButtonModule,ListboxModule,FormsModule,DialogModule,RouterModule],
   templateUrl: './quitz.component.html',
   styleUrl: './quitz.component.css'
 })
@@ -25,6 +28,11 @@ export class QuitzComponent implements OnInit {
 
   questios: Questions[] = []  // api questions
 
+   visible: boolean = false;
+
+    showDialog() {
+        this.visible = true;
+    }
 
 
   constructor(public serviceSubject: SubjectsService, public route: ActivatedRoute){}
@@ -49,7 +57,6 @@ export class QuitzComponent implements OnInit {
     this.serviceSubject.getQuestionsbyQuizId(this.quizId).subscribe({
       next: (data)=>{
         this.questios = data
-
       },
       error: (error) =>{console.error('Error fetching questions for quiz data:', error)}
     })
@@ -63,7 +70,9 @@ export class QuitzComponent implements OnInit {
    
   console.log(this.questios)
      this.serviceSubject.updateQuestionCorrectLetter(this.quizId, this.questios).subscribe({
-       next: ()=>{},
+       next: (data)=>{
+
+       },
        error: ()=>{}
      })
 
@@ -75,7 +84,6 @@ export class QuitzComponent implements OnInit {
   }
 
   get score(){
-
   return  this.questios.filter(q=> q.answer === q.correctLetter).length
 
   }

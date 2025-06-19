@@ -11,10 +11,12 @@ import { MessageService } from 'primeng/api';
 import { CommonModule } from '@angular/common';
 import { DatePickerModule } from 'primeng/datepicker';
 import { ButtonModule } from 'primeng/button';
-import { ReactiveFormsModule, FormGroup, FormControl, Validators, ValidatorFn, AbstractControl } from '@angular/forms';
+import { ReactiveFormsModule, FormGroup, FormControl, Validators, AbstractControl } from '@angular/forms';
 import { SubjectsService } from '../services/subjects.service';
 import { AddSubjectRequest } from '../models/addSubjectRequest';
 import { Router } from '@angular/router';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+
 
 
 const DateValidator = (control: AbstractControl) => {
@@ -56,14 +58,16 @@ function fileToBase64(file: File): Promise<string> {
 
 @Component({
   selector: 'app-add-subject',
-  imports: [ TextareaModule, InputIconModule, InputGroupModule, InputGroupAddonModule, 
-    FloatLabel,BadgeModule, ToastModule, FileUpload,CommonModule,DatePickerModule,ButtonModule, ReactiveFormsModule],
+  imports: [ TextareaModule, InputIconModule, InputGroupModule, InputGroupAddonModule, FloatLabel,BadgeModule, ToastModule,
+    FileUpload,CommonModule,DatePickerModule,ButtonModule, ReactiveFormsModule,ProgressSpinnerModule],
   templateUrl: './add-subject.component.html',
   styleUrl: './add-subject.component.css'
 })
 export class AddSubjectComponent implements OnInit {
 
     uploadedFiles: any[] = [];
+
+    loading = false
 
 
     form = new FormGroup({
@@ -106,10 +110,10 @@ onUpload(event:any) {
 
 
  onSubmit(){
-   
- (async ()=>{
 
-    const listabase64: string[] = []
+  this.loading = true;
+   
+ (async ()=>{  const listabase64: string[] = []
 
   for(let f of this.uploadedFiles ){
     const base64 =  await fileToBase64(f)
@@ -139,9 +143,14 @@ onUpload(event:any) {
    this.subjectService.addSubject(sendBk).subscribe({
     next: r=>{
       console.log(r)
+      this.loading = false
       this.route.navigate(['/subjects'])
+
+     
+
     },
     error: error=>{
+            this.loading = false
             console.error('Error fetching lessons data:', error);
     }
    })

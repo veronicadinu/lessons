@@ -18,9 +18,9 @@
                 <div class="flex flex-col h-48">
                   <p><strong>{{ q.content }}</strong></p>
                        <p-listbox [highlightOnSelect]="false" [options]="[{code: 'a', name: 'a. '+ q.a, question: q},
-                       {code: 'b', name: 'b. '+ q.b, question: q},
-                       {code: 'c', name: 'c. '+ q.c, question: q},
-                       {code: 'd', name: 'd. '+ q.d, question: q}]"
+                       {code: 'b', name: 'b. '+ q.b},
+                       {code: 'c', name: 'c. '+ q.c},
+                       {code: 'd', name: 'd. '+ q.d}]"
                         [(ngModel)]="q.answer" 
                         [disabled]="q.answer != null"
                          optionLabel="name"
@@ -46,7 +46,16 @@
                   @if(i< questios.length - 1) {
                     <p-button label="Next" (onClick)="activateCallback(i + 2)" />
                   } @else {
-                    <p-button [disabled]="disableButton()" (click)="submit()" label="Finish" severity="success" />
+                    <p-button (click)="showDialog()" [disabled]="disableButton()" (click)="submit()" label="Finish" severity="success" />
+                    <p-dialog [(visible)]="visible" [modal]="true" [style]="{ width: '25rem' }">
+    <ng-template #header>
+        
+    </ng-template>
+    <span class="text-surface-500 dark:text-surface-400 block mb-8">Congrats 🎉 🎉 🎉 ! Your score is: {{score}}/{{questios.length}}</span>
+    <ng-template #footer>
+        <p-button [routerLink]="['/subject/'+ quizId]" label="Cancel" [text]="true" severity="secondary" (click)="visible = false" />
+    </ng-template>
+</p-dialog>
                   }
                 </div>
             </ng-template>
