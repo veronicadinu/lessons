@@ -1,27 +1,44 @@
 
 
 
-<p>{{subject}}</p>
-
-
-
-<ul>Lessons </ul>
-  @for (l of lessons; track l.id) {
-    <li [routerLink]="['/lesson/' + l.id]" >{{ l.title}} - {{l.durationMinutes}} min</li>
-  }
-
+<h1 style="text-align: center;" >{{subject}}</h1>
 
 
 <full-calendar [options]="calendarOptions"></full-calendar>
 
 @if(allDone){
-<p-button label="Test Me"  (click)="clickquiz()" />
+<div style="width: 100%; display: flex; justify-content: end; padding: 20px;">
+  <p-button label="Test Me" (click)="clickquiz()" />
+</div>
 
-@for(q of quizzes; track q.id){
-    <p-listbox [options]="[q]" [routerLink]="['/quiz/' + q.id]"  optionLabel="title" class="w-full md:w-56" />
+}
+
+
+
+<p-accordion>
+    <p-accordion-panel value="0">
+        <p-accordion-header>Click here to have all the test generate...</p-accordion-header>
+        <p-accordion-content>
+            <p class="m-0">
+
+
+               @if(allDone){
+         @for(q of quizzes; track q.id){
+
+    <p-listbox [options]="[q]" [routerLink]="['/quiz/' + q.id]"  optionLabel="date" class="w-full md:w-56" >
+
+    <ng-template let-q pTemplate="item">
+     Test {{ q.id }} - on date: {{ q.date | date: 'medium' }}
+    </ng-template>
+
+    </p-listbox>
+    
 }
 
 }
+            </p>
+        </p-accordion-content>
+    </p-accordion-panel>
 
 
 

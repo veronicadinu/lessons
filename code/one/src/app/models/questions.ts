@@ -5,6 +5,7 @@ export interface Questions {
     b: string,
     c: string,
     d:string,
-    corectAnswer: string,
-    answer: string
+    correctLetter: string,
+    answer: string | null
+    quizId: number
 } 

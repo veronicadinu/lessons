@@ -1,4 +1,5 @@
 export interface Quiz {
     id: number,
-    date: string
+    date: string,
+    subjectId: number
 } 

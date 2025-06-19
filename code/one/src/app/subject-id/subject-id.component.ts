@@ -10,10 +10,11 @@ import { CalendarOptions, EventSourceInput } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import { ListboxModule } from 'primeng/listbox';
 import { Quiz } from '../models/quiz';
+import { AccordionModule } from 'primeng/accordion';
 
 @Component({
   selector: 'app-subject-id',
-  imports: [ButtonModule, CommonModule, RouterModule, FullCalendarModule,ListboxModule ],
+  imports: [ButtonModule, CommonModule, RouterModule, FullCalendarModule,ListboxModule, AccordionModule ],
   templateUrl: './subject-id.component.html',
   styleUrl: './subject-id.component.css'
 })
@@ -115,8 +116,9 @@ export class SubjectIdComponent implements OnInit {
       
 
     this.serverSubject.getQuizzesbySubjectId(this.subjectId).subscribe({
-      next: (date)=>{
-           this.quizzes = date
+      next: (data)=>{
+        console.log(data)
+           this.quizzes = data
       },
       error: (error)=>{console.error('Error fetching quizzes data:', error);}
     })
@@ -134,8 +136,11 @@ export class SubjectIdComponent implements OnInit {
   clickquiz(){
    this.serverSubject.addQuizbySubjectId(this.subjectId).subscribe({
     next: (data)=>{
+      if(data && data.id){
+
       console.log(data.id)
       this.router.navigateByUrl(`/quiz/${data.id}`)
+      }
     },
     error: (error)=>{console.error('Error fetching quizzes data:', error);}
    })

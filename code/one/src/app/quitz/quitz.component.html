@@ -1,1 +1,70 @@
-<p>quitz works!</p>
+
+
+@if(quiz){
+    <div style="height: 100%; width: 100%;">
+
+    <h3 style="width: 100%;text-align: center;">Test {{quiz.id}} made in {{quiz.date | date: 'fullDate'}}</h3>
+
+    <h4>Score: {{score}}/{{questios.length}}</h4>
+    
+    <p-stepper  [value]="1" >
+
+        @for(q of questios; track q.id; let i = $index){
+             <p-step-item pButtonLabel [value]="i+1">
+        <p-step >Question{{i + 1}}</p-step>
+        <p-step-panel>
+            <ng-template #content let-activateCallback="activateCallback">
+
+                <div class="flex flex-col h-48">
+                  <p><strong>{{ q.content }}</strong></p>
+                       <p-listbox [highlightOnSelect]="false" [options]="[{code: 'a', name: 'a. '+ q.a, question: q},
+                       {code: 'b', name: 'b. '+ q.b, question: q},
+                       {code: 'c', name: 'c. '+ q.c, question: q},
+                       {code: 'd', name: 'd. '+ q.d, question: q}]"
+                        [(ngModel)]="q.answer" 
+                        [disabled]="q.answer != null"
+                         optionLabel="name"
+                         optionValue="code"
+                         class="w-full md:w-56" >
+                        
+                         <ng-template #item let-answer>
+        <div class="flex items-center gap-2">
+           
+            <div [style.color]="!q.answer ? 'black' : (q.correctLetter === answer.code ? 'green' : (q.answer === answer.code ? 'red' : 'black'))" [style.font-weight]="q.answer === answer.code ? 'bold' : ''">{{ answer.name }}</div>
+        </div>
+    </ng-template>
+                        
+                        
+                        </p-listbox>
+                         
+                </div>
+
+                <div class="flex gap-2 mt-4">
+                  @if(i > 0) {
+                    <p-button label="Back" severity="secondary" (onClick)="activateCallback(i)" />
+                  }
+                  @if(i< questios.length - 1) {
+                    <p-button label="Next" (onClick)="activateCallback(i + 2)" />
+                  } @else {
+                    <p-button [disabled]="disableButton()" (click)="submit()" label="Finish" severity="success" />
+                  }
+                </div>
+            </ng-template>
+        </p-step-panel>
+    </p-step-item>
+
+        }
+
+
+
+
+ 
+
+</p-stepper>
+
+
+</div>
+} @else {
+    ...loading
+
+}

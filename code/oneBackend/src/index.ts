@@ -383,7 +383,8 @@ app.get('/api/quizzes/subjectId/:id', async (req: AuthenticatedRequest, res: Res
 try{
     const subjectId = +req.params.id
 
-    const [quizzes] = await baza.execute(`SELECT * FROM quiz WHERE subjectId=?`, [subjectId])
+    const [quizzes]: any  = await baza.execute(`SELECT * FROM quiz WHERE subjectId=?`, [subjectId])
+    console.log('Quizzes from DB:', quizzes); // Debug
      res.status(200).send(quizzes)
 
 }catch(error){
@@ -523,6 +524,30 @@ Respond only with json if the following format:
 
 
 
+
+})
+
+
+app.put('/api/question/update/:id', async(req: AuthenticatedRequest, res: Response)=>{
+
+try{
+
+    const id = +req.params.id
+    const body = req.body as Question[]
+
+    for (let q of body){
+       await baza.execute(`UPDATE questions SET answer=? WHERE id=?`, [q.answer, q.id])
+    }
+
+    
+
+    res.status(200).send({message: 'Success'})
+
+
+}catch(error){
+  res.status(500).send({message: 'Server error'})
+      console.error('Error updating quiz:', error);
+}
 
 })
 

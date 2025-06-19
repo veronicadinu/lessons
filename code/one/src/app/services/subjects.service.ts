@@ -5,6 +5,7 @@ import { AddSubjectResponse } from '../models/addSubjectResponse';
 import { SubjectInterface } from '../models/subject';
 import { Lesson } from '../models/lesson';
 import { Quiz } from '../models/quiz';
+import { Questions } from '../models/questions';
 @Injectable({
   providedIn: 'root'
 })
@@ -47,11 +48,23 @@ export class SubjectsService {
 
     
     getQuizzesbySubjectId(id:number){
-      return this.http.get<Quiz[]>(`/api/quizzes/subjectId/${id}'`)
+      return this.http.get<Quiz[]>(`/api/quizzes/subjectId/${id}`)
     }
 
-    addQuizbySubjectId(id: number, body:any=null){
-      return this.http.post<any>(`/api/addQuiz/${id}`, body)
+    addQuizbySubjectId(id: number){
+      return this.http.post<any>(`/api/addQuiz/${id}`, null)
+    }
+
+    getOneQuiz(id:number){
+      return this.http.get<Quiz>(`/api/quiz/${id}`)
+    }
+
+    getQuestionsbyQuizId(quizId: number){
+      return this.http.get<Questions[]>(`/api/questions/${quizId}`)
+    }
+
+    updateQuestionCorrectLetter(id:number, body: Questions[]){
+      return this.http.put(`/api/question/update/${id}`, body)
     }
 
 

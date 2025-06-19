@@ -5,5 +5,6 @@ export interface Lesson {
     date: string,
     content: string,
     summary: string,
-    done: boolean
+    done: boolean,
+    subjectId: number
 } 

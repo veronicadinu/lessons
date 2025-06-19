@@ -1,8 +1,10 @@
-import { Component } from '@angular/core';
+import { Component } from '@angular/core';;
+import { ButtonModule } from 'primeng/button';
+
 
 @Component({
   selector: 'app-bottom',
-  imports: [],
+  imports: [ButtonModule],
   templateUrl: './bottom.component.html',
   styleUrl: './bottom.component.css'
 })
