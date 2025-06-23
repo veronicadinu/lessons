@@ -6,12 +6,15 @@ import { SubjectInterface } from '../models/subject';
 import { Lesson } from '../models/lesson';
 import { Quiz } from '../models/quiz';
 import { Questions } from '../models/questions';
+
 @Injectable({
   providedIn: 'root'
 })
 export class SubjectsService {
 
   constructor(private http: HttpClient) { }
+
+  
 
    getSubjectsAll(){
     return this.http.get<SubjectInterface[]>('/api/subjectsAll')  //token added by interceptor
