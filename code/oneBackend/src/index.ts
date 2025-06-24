@@ -16,6 +16,8 @@ import { AiLesson } from "./models/AiLesson";
 import { Lesson } from "./models/Lesson";
 import { Subject } from "./models/subject";
 import {File} from './models/file'
+import { send } from "process";
+import { Question } from "./models/question";
 
 //base64 to stream 
 function frombase64tostream( base64: string){
@@ -287,8 +289,9 @@ try{
 
     const file = fileRows as File[]
 
+   
 
-      const resposeAI = ai.models.generateContent({
+      const resposeAI =  ai.models.generateContent({
       model: "gemini-2.0-flash", 
           contents: `
           
@@ -297,7 +300,7 @@ try{
                      ${subject.instructionAi ? "follow these instructions if exists:"+ subject.instructionAi : ""}
 
 
-                     ${file.length > 0 ? "Reference the following documentation files: \n  "+ file.map(x => x.content).join("\n\n\n\n") : ""}
+                     ${file.length > 0 ? "You have access to the following documentation files, which must be used as primary reference material when creating the lesson. Don't add extra general knowledge, focus on the material: \n  "+ file.map(x => x.content).join("\n\n\n\n") : ""}
 
 
 
@@ -308,7 +311,7 @@ try{
   })
 
 
-  const resposeAiSummery = ai.models.generateContent({
+  const resposeAiSummery =   ai.models.generateContent({
       model: "gemini-2.0-flash", 
           contents: `You are teaching a lesson for the subject : ${subject.nameSubject}.
                       The title of the lessson is ${lesson.title}.
@@ -317,12 +320,12 @@ try{
                        ${subject.instructionAi ? "follow these instructions if exists:"+ subject.instructionAi : ""}
 
 
-                     ${file.length > 0 ? "Reference the following documentation files: \n  "+ file.map(x => x.content).join("\n\n\n\n") : ""}
+                     ${file.length > 0 ? "You have access to the following documentation files, which must be used as primary reference material when creating the lesson. Don't add extra general knowledge, focus on the material.  \n  "+ file.map(x => x.content).join("\n\n\n\n") : ""}
 
 
-                      Generate a clear and concise lesson summary with only the principal ideas that can be understood in exactly one minute. If appropriate, include a high-level lesson skeleton or outline.
-                      Be clear, engaging, and informative. Keep your reply short and to the point.
-                      Format the output as HTML, with no html tag, head or body included.
+                     Generate a clear and concise lesson summary with only the principal ideas that can be understood in exactly one minute. If appropriate, include a high-level lesson skeleton or outline.
+                     Be clear, engaging, and informative. Keep your reply short and to the point.
+                     Format the output as HTML, with no html tag, head or body included.
                       ` 
   })
 
@@ -374,6 +377,182 @@ app.put('/api/lesson/edit/:id', async (req: AuthenticatedRequest, res: Response)
 
   }
 })
+
+
+app.get('/api/quizzes/subjectId/:id', async (req: AuthenticatedRequest, res: Response)=>{
+
+try{
+    const subjectId = +req.params.id
+
+    const [quizzes]: any  = await baza.execute(`SELECT * FROM quiz WHERE subjectId=?`, [subjectId])
+    console.log('Quizzes from DB:', quizzes); // Debug
+     res.status(200).send(quizzes)
+
+}catch(error){
+
+     res.status(500).send({message: 'Server error'})
+      console.error('Error get quizzes:', error);
+}
+})
+
+
+app.get('/api/quiz/:id', async(req:AuthenticatedRequest, res: Response)=>{
+
+try{
+
+   const id = req.params.id
+
+   const [quiz] = await baza.execute(`SELECT * FROM quiz WHERE id=?`, [id])
+
+    if((quiz as any ).length === 0 ){
+    res.status(404).send({message: 'Not found'})
+  }
+  res.status(200).send((quiz as any)[0] )
+
+
+}catch(error){
+   res.status(500).send({message: 'Server error'})
+      console.error('Error get quiz:', error);
+}
+
+
+})
+
+
+app.get('/api/questions/:quizId', async(req: AuthenticatedRequest, res: Response)=>{
+
+
+
+  try{ 
+     const quizId = +req.params.quizId
+
+     const [allQuestios]: any = await baza.execute(`SELECT * FROM questions WHERE quizId=?` , [quizId])
+
+     res.status(200).send(allQuestios)
+
+  }catch(error){
+      res.status(500).send({message: 'Server error'})
+      console.error('Error questions:', error);
+  }
+
+
+
+
+
+
+   
+
+
+
+})
+
+
+app.post('/api/addQuiz/:id', async (req: AuthenticatedRequest , res: Response)=>{
+
+ try{
+
+   const subjectId = +req.params.id
+
+   
+
+   const [lessons]: any = await baza.execute('SELECT * FROM lessons WHERE subjectId=? AND done=1', [subjectId]) 
+   
+
+   const listaContent: string[] = lessons.map((l: Lesson) => l.content)
+
+
+  
+  const resposeAi = await ai.models.generateContent({
+      model: "gemini-2.0-flash", 
+          contents: `
+          Based on the following lessons content: 
+          ${listaContent.join('\n\n\n\n\n')}.
+          
+           Create a 10-questions quiz for possible answer only one is corect.
+
+          
+Each question should:
+- Be clear and based only on the content provided.
+- Include 4 answer options labeled A, B, C, D.
+- Do not repeat questions.
+- Keep the difficulty at an appropriate level for students who just finished the lessons.
+
+
+Respond only with json if the following format:
+
+ Question = {"content": string, "a": string, "b": string, "c": string, "d": string, "correctLetter": string}
+
+ Return: array<Question>
+
+` 
+  })
+
+
+  const response = resposeAi.text?.replaceAll('```json', '').replaceAll('```', '')
+
+  const lista = JSON.parse(response!) as Question[]
+
+  console.log(lista)
+
+
+  const [insertResult] : any = await baza.execute('INSERT INTO quiz (date, subjectId) VALUES (?,?)', [new Date().toISOString(), subjectId])
+
+  const quizId = +insertResult.insertId
+
+  console.log(quizId, insertResult)
+
+
+  for (let q of lista){
+    
+  await baza.execute('INSERT INTO questions (content, `a`, `b`, `c`, `d`, correctLetter, quizId, answer) VALUES (?,?,?,?,?,?,?,?)', [q.content, q.a, q.b, q.c, q.d, q.correctLetter, quizId, null])
+
+  }
+
+  res.status(200).send({id: quizId})
+
+
+
+
+
+
+ }catch(error){
+    console.log("DB Read Error:", error)
+    res.status(500).send({message: "Server error"})
+
+ }
+
+
+
+
+
+
+})
+
+
+app.put('/api/question/update/:id', async(req: AuthenticatedRequest, res: Response)=>{
+
+try{
+
+    const id = +req.params.id
+    const body = req.body as Question[]
+
+    for (let q of body){
+       await baza.execute(`UPDATE questions SET answer=? WHERE id=?`, [q.answer, q.id])
+    }
+
+    
+
+    res.status(200).send({message: 'Success'})
+
+
+}catch(error){
+  res.status(500).send({message: 'Server error'})
+      console.error('Error updating quiz:', error);
+}
+
+})
+
+
 
 
 

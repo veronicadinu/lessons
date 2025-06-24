@@ -4,6 +4,12 @@
 
 <form [formGroup]="form" (ngSubmit)="onSubmit()" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; width: 100%; gap: 1rem;">
 
+    <h3>Add your Preferred Subject!!!</h3>
+
+    @if(!loading){
+
+        <ng-container  >
+
 <p-floatlabel variant="on">
     <input pTextarea id="on_label" formControlName="nameSubject" autocomplete="off"/>
     <label for="on_label">Name Subject</label>
@@ -38,9 +44,19 @@
     <label for="on_label">Max Lenght for 1 lesson</label>
 </p-floatlabel>
 
+</ng-container>
 
 
-<p-button label="Submit" [disabled]="form.invalid" type="Submit" />
+} @else {
+<p-progress-spinner ariaLabel="loading" />
+}
+
+
+<p-button label="Submit" [disabled]="form.invalid || loading" type="Submit" />
+
+
 
 </form>
+
+
 

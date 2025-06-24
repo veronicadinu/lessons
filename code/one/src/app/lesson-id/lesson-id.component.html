@@ -19,6 +19,10 @@
 </div>
 
 
+
+
+
+
 <p-accordion>
     <p-accordion-panel  value="0">
         <p-accordion-header>If you want to see the hole lesson. Click here...</p-accordion-header>
@@ -44,6 +48,15 @@
             
             <br>
              <p-button (click)="clickEditButton( )" label="Save Edit" />
+
+             
+          @if(lesson){
+              <p-button (click)="clickSpeech()" label="Speech" />
+
+                <p-button (click)="stopSpeech()" label="Stop" />
+
+              
+          }
         
     </div>
 

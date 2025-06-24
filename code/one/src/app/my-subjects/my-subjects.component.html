@@ -3,35 +3,31 @@
 
    <h3>Subjects</h3>
 
-       <div *ngFor="let r of respons; let i=index;" >
+   <p-card [style]="{ width: '100%', overflow: 'hidden', marginBottom:'20px' }">
 
-   <p-card [style]="{ width: '25rem', overflow: 'hidden', padding:'10px', marginBottom: '10px' }">
-    
-    <ng-template  #subtitle> <a [routerLink]="['/subject/', r.id]">{{r.nameSubject}}</a>  </ng-template>
+@for(r of respons; track r.id; let i=$index){
 
-    
+
+<div  style="display: flex; flex-direction: row; align-items: center; justify-content: space-around;">
+    <a [routerLink]="['/subject/', r.id]" style="width: 80%; padding: 10px;" >
+     <p-listbox [options]="[r]"  optionLabel="nameSubject" class="w-full md:w-56" />
+    </a>
+   
+    <div >
+    <p-button (click)="deleteSubject(r.id)" icon="pi pi-times" severity="danger" />
+    </div>
   
-    <ng-template #footer>
-        <div style="display: flex; justify-content: end;">
-            <p-button (click)="deleteSubject(r.id)" icon="pi pi-times" severity="danger" />
-        </div>
-    </ng-template>
+</div>
+}
+
+    
 </p-card>
 
-
-    </div>
+      
 
     <div>
        <p-button label="Add" icon="pi pi-plus" iconPos="right"  [routerLink]="['/addSubject']"/>
     </div>
-
-
-
-
-
-
-
-
 
 
 

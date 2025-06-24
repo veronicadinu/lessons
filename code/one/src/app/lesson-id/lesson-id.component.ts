@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { PanelModule } from 'primeng/panel';
 import { ToggleButtonModule } from 'primeng/togglebutton';
@@ -8,6 +8,11 @@ import { SubjectsService } from '../services/subjects.service';
 import { ActivatedRoute } from '@angular/router';
 import { AccordionModule } from 'primeng/accordion';
 import { EditorModule } from 'primeng/editor';
+import { TextToSpeechService } from '../services/speech.service';
+import { HtmltotextService } from '../services/htmltotext.service';
+
+
+
 
 @Component({
   selector: 'app-lesson-id',
@@ -15,14 +20,20 @@ import { EditorModule } from 'primeng/editor';
   templateUrl: './lesson-id.component.html',
   styleUrl: './lesson-id.component.css'
 })
-export class LessonIdComponent implements OnInit {
+export class LessonIdComponent implements OnInit, OnDestroy {
 
   lesson:Lesson | null = null
 
   idLesson!: number
 
+  isSpeeching = false
 
-  constructor(public subjectService: SubjectsService, public route: ActivatedRoute){}
+
+
+  constructor(public subjectService: SubjectsService,
+              public route: ActivatedRoute,
+              public tss: TextToSpeechService,
+              public htmltotext: HtmltotextService){}
 
 
   ngOnInit(): void {
@@ -45,11 +56,35 @@ export class LessonIdComponent implements OnInit {
   }
 
 
+  ngOnDestroy(): void {
+    //Called once, before the instance is destroyed.
+    //Add 'implements OnDestroy' to the class.
+
+    this.tss.stop();
+    this.isSpeeching = false
+    
+  }
+
+
   clickEditButton(){
     this.subjectService.updateLessonbyId(this.idLesson, this.lesson!).subscribe({
       next: data =>{ console.log("Succes")},
       error: error =>{}
     })
+  }
+
+  clickSpeech(){
+
+    const text = this.htmltotext.extractTextFromHtml(this.lesson!.content).replaceAll("_", "")
+
+    this.tss.speak(text)
+    console.log(text)
+    this.isSpeeching = true
+  }
+
+  stopSpeech(){
+    this.tss.stop()
+    this.isSpeeching = false
   }
 
 }

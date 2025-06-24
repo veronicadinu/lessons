@@ -6,12 +6,15 @@ import { CommonModule } from '@angular/common';
 import { Lesson } from '../models/lesson';
 import { RouterModule } from '@angular/router';
 import { FullCalendarModule } from '@fullcalendar/angular';
-import { CalendarOptions, EventClickArg, EventSourceInput } from '@fullcalendar/core'; 
+import { CalendarOptions, EventSourceInput } from '@fullcalendar/core'; 
 import dayGridPlugin from '@fullcalendar/daygrid';
+import { ListboxModule } from 'primeng/listbox';
+import { Quiz } from '../models/quiz';
+import { AccordionModule } from 'primeng/accordion';
 
 @Component({
   selector: 'app-subject-id',
-  imports: [ButtonModule, CommonModule, RouterModule, FullCalendarModule],
+  imports: [ButtonModule, CommonModule, RouterModule, FullCalendarModule,ListboxModule, AccordionModule ],
   templateUrl: './subject-id.component.html',
   styleUrl: './subject-id.component.css'
 })
@@ -36,7 +39,9 @@ export class SubjectIdComponent implements OnInit {
 
     dayMaxEventRows: false,
 
-    eventDisplay: 'block'
+    eventDisplay: 'block',
+
+    eventOrder: 'id',
 
 
 
@@ -53,6 +58,8 @@ export class SubjectIdComponent implements OnInit {
   subjectId!: number 
 
   lessons : Lesson[]= []
+
+  quizzes: Quiz[] = []
 
  
 
@@ -81,7 +88,15 @@ export class SubjectIdComponent implements OnInit {
               }
            });
 
-           this.calendarOptions.events = events;
+        const sortedEvents = events.sort((a, b) => {
+            const idA = Number(a.id) || 0;  // Convert to number or fallback to 0
+            const idB = Number(b.id) || 0;
+            return idA - idB;
+                                });
+
+           this.calendarOptions.events = sortedEvents;
+
+           
 
           },
           error: (error)=>{console.error('Error fetching lessons data:', error);}
@@ -98,7 +113,15 @@ export class SubjectIdComponent implements OnInit {
       error: (error)=>{console.error('Error fetching subject data:', error);}
     })
 
-    
+      
+
+    this.serverSubject.getQuizzesbySubjectId(this.subjectId).subscribe({
+      next: (data)=>{
+        console.log(data)
+           this.quizzes = data
+      },
+      error: (error)=>{console.error('Error fetching quizzes data:', error);}
+    })
 
 
     
@@ -106,7 +129,21 @@ export class SubjectIdComponent implements OnInit {
 
 
   get allDone(){
-    return this.lessons.every(l => l.done === true)
+   // return this.lessons?.length > 0 && this.lessons.every(l => !!l.done);
+    return this.lessons?.length > 0 && this.lessons.every(l => l.done == true);
+  }
+
+  clickquiz(){
+   this.serverSubject.addQuizbySubjectId(this.subjectId).subscribe({
+    next: (data)=>{
+      if(data && data.id){
+
+      console.log(data.id)
+      this.router.navigateByUrl(`/quiz/${data.id}`)
+      }
+    },
+    error: (error)=>{console.error('Error fetching quizzes data:', error);}
+   })
   }
 
     

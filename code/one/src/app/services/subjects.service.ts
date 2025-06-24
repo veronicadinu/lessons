@@ -2,9 +2,10 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AddSubjectRequest } from '../models/addSubjectRequest';
 import { AddSubjectResponse } from '../models/addSubjectResponse';
-import { Observable } from 'rxjs';
 import { SubjectInterface } from '../models/subject';
 import { Lesson } from '../models/lesson';
+import { Quiz } from '../models/quiz';
+import { Questions } from '../models/questions';
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +13,8 @@ import { Lesson } from '../models/lesson';
 export class SubjectsService {
 
   constructor(private http: HttpClient) { }
+
+  
 
    getSubjectsAll(){
     return this.http.get<SubjectInterface[]>('/api/subjectsAll')  //token added by interceptor
@@ -44,6 +47,27 @@ export class SubjectsService {
 
     updateLessonbyId(id: number, body: Lesson){
          return this.http.put(`/api/lesson/edit/${id}`, body)
+    }
+
+    
+    getQuizzesbySubjectId(id:number){
+      return this.http.get<Quiz[]>(`/api/quizzes/subjectId/${id}`)
+    }
+
+    addQuizbySubjectId(id: number){
+      return this.http.post<any>(`/api/addQuiz/${id}`, null)
+    }
+
+    getOneQuiz(id:number){
+      return this.http.get<Quiz>(`/api/quiz/${id}`)
+    }
+
+    getQuestionsbyQuizId(quizId: number){
+      return this.http.get<Questions[]>(`/api/questions/${quizId}`)
+    }
+
+    updateQuestionCorrectLetter(id:number, body: Questions[]){
+      return this.http.put(`/api/question/update/${id}`, body)
     }
 
 
