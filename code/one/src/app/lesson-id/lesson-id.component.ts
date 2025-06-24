@@ -12,6 +12,8 @@ import { TextToSpeechService } from '../services/speech.service';
 import { HtmltotextService } from '../services/htmltotext.service';
 
 
+
+
 @Component({
   selector: 'app-lesson-id',
   imports: [ButtonModule, PanelModule,ToggleButtonModule,FormsModule,AccordionModule,EditorModule],
@@ -28,7 +30,10 @@ export class LessonIdComponent implements OnInit, OnDestroy {
 
 
 
-  constructor(public subjectService: SubjectsService, public route: ActivatedRoute, public tss: TextToSpeechService, public htmltotext: HtmltotextService){}
+  constructor(public subjectService: SubjectsService,
+              public route: ActivatedRoute,
+              public tss: TextToSpeechService,
+              public htmltotext: HtmltotextService){}
 
 
   ngOnInit(): void {

@@ -289,6 +289,7 @@ try{
 
     const file = fileRows as File[]
 
+   
 
       const resposeAI =  ai.models.generateContent({
       model: "gemini-2.0-flash", 
@@ -299,7 +300,7 @@ try{
                      ${subject.instructionAi ? "follow these instructions if exists:"+ subject.instructionAi : ""}
 
 
-                     ${file.length > 0 ? "Reference the following documentation files: \n  "+ file.map(x => x.content).join("\n\n\n\n") : ""}
+                     ${file.length > 0 ? "You have access to the following documentation files, which must be used as primary reference material when creating the lesson. Don't add extra general knowledge, focus on the material: \n  "+ file.map(x => x.content).join("\n\n\n\n") : ""}
 
 
 
@@ -319,12 +320,12 @@ try{
                        ${subject.instructionAi ? "follow these instructions if exists:"+ subject.instructionAi : ""}
 
 
-                     ${file.length > 0 ? "Reference the following documentation files: \n  "+ file.map(x => x.content).join("\n\n\n\n") : ""}
+                     ${file.length > 0 ? "You have access to the following documentation files, which must be used as primary reference material when creating the lesson. Don't add extra general knowledge, focus on the material.  \n  "+ file.map(x => x.content).join("\n\n\n\n") : ""}
 
 
-                      Generate a clear and concise lesson summary with only the principal ideas that can be understood in exactly one minute. If appropriate, include a high-level lesson skeleton or outline.
-                      Be clear, engaging, and informative. Keep your reply short and to the point.
-                      Format the output as HTML, with no html tag, head or body included.
+                     Generate a clear and concise lesson summary with only the principal ideas that can be understood in exactly one minute. If appropriate, include a high-level lesson skeleton or outline.
+                     Be clear, engaging, and informative. Keep your reply short and to the point.
+                     Format the output as HTML, with no html tag, head or body included.
                       ` 
   })
 
