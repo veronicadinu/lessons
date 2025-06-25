@@ -15,7 +15,9 @@
         @if(!user){
             <button (click)="login()"> Login </button>
         }
-      <p-chip [label]="user?.name || 'User'" [image]="user?.picture ? user?.picture : '/assets/default-avatar.webp'" alt="Avatar image" />
+      <p-chip [label]="user?.name || 'User'" alt="Avatar image">
+        <img style="border-radius: 50%;" width="32" height="32" [src]="user?.picture ? user?.picture : '/assets/default-avatar.webp'" referrerpolicy="no-referrer" />
+      </p-chip>
 
     </ng-template>
 
