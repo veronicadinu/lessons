@@ -16,8 +16,9 @@ import { AiLesson } from "./models/AiLesson";
 import { Lesson } from "./models/Lesson";
 import { Subject } from "./models/subject";
 import {File} from './models/file'
-import { send } from "process";
 import { Question } from "./models/question";
+import { extractImagesFromPdf } from 'pdf-extract-image';
+import { Photo } from "./models/photo";
 
 //base64 to stream 
 function frombase64tostream( base64: string){
@@ -40,6 +41,22 @@ const getTextFromStream = async (stream: NodeJS.ReadableStream) => {
   const data = await pdfToText(buffer);
   return data;
 };
+
+
+function base64ToUint8Array(base64: string) {
+  // Decode the Base64 string
+  const binaryString = atob(base64);
+  
+  // Create a new Uint8Array
+  const uint8Array = new Uint8Array(binaryString.length);
+  
+  // Populate it with the character codes
+  for (let i = 0; i < binaryString.length; i++) {
+    uint8Array[i] = binaryString.charCodeAt(i);
+  }
+  
+  return uint8Array;
+}
 
 
 const app = express();
@@ -150,29 +167,53 @@ app.post('/api/addSubject', async (req: AuthenticatedRequest, res: Response): Pr
 
        const listaFiles: string[] = []
 
+       const listaPhoto: string[]= [] ///base64 lista photo
+
+
+
        if(files && files.length > 0 ){
 
         for (let f of files){
           
           const stream = frombase64tostream(f)
 
+          const buffer = base64ToUint8Array(f)
+
+          const images = await extractImagesFromPdf(buffer as any )
+
+          const imagesbase64 = images.map((i)=>{
+            return i.toString("base64")
+          })
+
           const text = await getTextFromStream(stream)
+
+          
           
           listaFiles.push(text)
+          listaPhoto.push(...imagesbase64)
+
              
-          await baza.execute("INSERT INTO files(subjectId, content) VALUES (?,?)", [subjectId, text])
+         const [resultfileId]: any  = await baza.execute("INSERT INTO files(subjectId, content) VALUES (?,?)", [subjectId, text])
+
+    
+
+          for(let p of imagesbase64){
+            await baza.execute("INSERT INTO photos(fileId, content, type) VALUES (?,?,?)", [ resultfileId.insertId, p, ".jpg"])
+          }
         }
        }
 
        //Gemini
 
-         const response = await ai.models.generateContent({
-          model: "gemini-2.0-flash",
-          contents: `    
+          const contents: any  = [
+        
+          { text: `    
           
           Act as a teacher. I want to learn the subject: ${nameSubject}. 
           ${instructionAi? "follow these instructions:"+ instructionAi : ""}
           ${listaFiles.length > 0 ? "here is some documentation files: \n  "+ listaFiles.join("\n\n\n\n") : ""}
+           ${listaPhoto.length > 0 ? "take into account the attached photos" : ""}
+
           
 
 
@@ -195,7 +236,27 @@ app.post('/api/addSubject', async (req: AuthenticatedRequest, res: Response): Pr
           
           
           
-          `,
+          ` },
+        ]; 
+
+
+        for(let p of listaPhoto){
+            contents.push({
+              inlineData: {
+                mimeType: "image/jpeg",
+                data: p 
+              }
+            })
+        }
+        
+        
+
+
+         const response = await ai.models.generateContent({
+          model: "gemini-2.0-flash",
+          contents: contents
+
+          
        });
 
 
@@ -289,44 +350,85 @@ try{
 
     const file = fileRows as File[]
 
-   
 
-      const resposeAI =  ai.models.generateContent({
-      model: "gemini-2.0-flash", 
-          contents: `
+    const allphotosFiles:Photo[] = []  
+
+    for(let f of file){
+      const [rowsPhoto]: any = await baza.execute(`SELECT * FROM photos WHERE fileId=?`, [f.id])
+      allphotosFiles.push(...rowsPhoto)
+    }
+
+
+       const contents1: any  = [
+
+        {text: `
           
            You are teaching a lesson for the subject : ${subject.nameSubject}. The title of the lessson is ${lesson.title}.
 
                      ${subject.instructionAi ? "follow these instructions if exists:"+ subject.instructionAi : ""}
-
-
                      ${file.length > 0 ? "You have access to the following documentation files, which must be used as primary reference material when creating the lesson. Don't add extra general knowledge, focus on the material: \n  "+ file.map(x => x.content).join("\n\n\n\n") : ""}
-
+                     ${allphotosFiles.length > 0 ? "take into account the attached photos" : ""}
 
 
            Develop a well-structured lesson content that can be delivered in no more than ${lesson.durationMinutes} minutes.
            Be clear, engaging, and informative.
-           Format the output as HTML, with no html tag, head or body included.
-          `
+           Format the output as HTML, with no html tag, head or body included. Do not use img tags.
+          `}
+       ]
+
+       
+
+       for(let p of allphotosFiles){
+        contents1.push({
+          inlineData: {
+            mimeType: 'image/jpeg',
+            data: p.content
+          }
+        })
+       }
+
+   
+
+      const resposeAI =  ai.models.generateContent({
+      model: "gemini-2.0-flash", 
+          contents: contents1
   })
+
+
+
+    const contents2 : any = [
+      {text:`You are teaching a lesson for the subject : ${subject.nameSubject}.
+                      The title of the lessson is ${lesson.title}.
+
+
+                     ${subject.instructionAi ? "follow these instructions if exists:"+ subject.instructionAi : ""}
+                     ${file.length > 0 ? "You have access to the following documentation files, which must be used as primary reference material when creating the lesson. Don't add extra general knowledge, focus on the material.  \n  "+ file.map(x => x.content).join("\n\n\n\n") : ""}
+                     ${allphotosFiles.length > 0 ? "take into account the attached photos" : ""}
+
+                     Generate a clear and concise lesson summary with only the principal ideas that can be understood in exactly one minute. If appropriate, include a high-level lesson skeleton or outline.
+                     Be clear, engaging, and informative. Keep your reply short and to the point.
+                     Format the output as HTML, with no html tag, head or body included. Do not use img tags.
+                      `  }
+    ]
+
+
+
+     for(let p of allphotosFiles){
+        contents2.push({
+          inlineData: {
+            mimeType: 'image/jpeg',
+            data: p.content
+          }
+        })
+       }
+
+
+
 
 
   const resposeAiSummery =   ai.models.generateContent({
       model: "gemini-2.0-flash", 
-          contents: `You are teaching a lesson for the subject : ${subject.nameSubject}.
-                      The title of the lessson is ${lesson.title}.
-
-
-                       ${subject.instructionAi ? "follow these instructions if exists:"+ subject.instructionAi : ""}
-
-
-                     ${file.length > 0 ? "You have access to the following documentation files, which must be used as primary reference material when creating the lesson. Don't add extra general knowledge, focus on the material.  \n  "+ file.map(x => x.content).join("\n\n\n\n") : ""}
-
-
-                     Generate a clear and concise lesson summary with only the principal ideas that can be understood in exactly one minute. If appropriate, include a high-level lesson skeleton or outline.
-                     Be clear, engaging, and informative. Keep your reply short and to the point.
-                     Format the output as HTML, with no html tag, head or body included.
-                      ` 
+          contents: contents2
   })
 
   const [summaryResponse, contentResponse] = await Promise.all([resposeAiSummery, resposeAI]);
