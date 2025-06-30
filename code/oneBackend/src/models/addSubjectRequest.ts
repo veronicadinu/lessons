@@ -7,5 +7,8 @@ export interface AddSubjectRequest {
       dateEnd: string
       timePerDay:number
       maxLengthLesson:number | null |undefined,
+         activatedPush: boolean 
+      notificationTime: number | null
+      timeZone: string
       
 }

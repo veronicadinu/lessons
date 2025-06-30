@@ -6,6 +6,9 @@ export interface Subject {
       dateEnd: string
       timePerDay:number
       maxLengthLesson:number | null ,
+      activatedPush: boolean 
+      notificationTime: number | null
+      timeZone: string
       
       
 }

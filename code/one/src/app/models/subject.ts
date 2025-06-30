@@ -7,6 +7,9 @@ export interface SubjectInterface {
     startDate: string
     timePerDay: number
     userId: string
+          activatedPush: boolean 
+      notificationTime: number | null
+      timeZone: string
 
 
 }

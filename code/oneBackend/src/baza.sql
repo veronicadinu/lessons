@@ -10,6 +10,9 @@ CREATE TABLE IF NOT EXISTS `subjects`(
 `endDate` varchar(200) not null,
 `timePerDay` int not null,
 `maxLengthLesson` int ,
+`activatedPush` boolean,
+`notificationTime` int,
+`timeZone` varchar(200) not null,
 `userId` varchar(200) not null,
 PRIMARY KEY (`id`)
 );

@@ -153,7 +153,7 @@ app.post('/api/addSubject', async (req: AuthenticatedRequest, res: Response): Pr
   try{
 
     const userId = req.userAuth?.sub
-    const {nameSubject,instructionAi, dateEnd,dateStart,files,maxLengthLesson,timePerDay} = req.body as AddSubjectRequest
+    const {nameSubject,instructionAi, dateEnd,dateStart,files,maxLengthLesson,timePerDay, activatedPush, notificationTime, timeZone } = req.body as AddSubjectRequest
 
     if(!userId) {
     res.status(400).send({message: "User ID not found in token"})
@@ -166,8 +166,8 @@ app.post('/api/addSubject', async (req: AuthenticatedRequest, res: Response): Pr
    }
 
 
-  const rezultatsubjectId =  await baza.execute("INSERT INTO subjects (nameSubject, instructionAi, startDate, endDate , timePerDay,  maxLengthLesson, userId) VALUES (?,?,?,?,?,?,?)",
-     [nameSubject, instructionAi || null, dateStart, dateEnd, timePerDay,  maxLengthLesson || null, userId])
+  const rezultatsubjectId =  await baza.execute("INSERT INTO subjects (nameSubject, instructionAi, startDate, endDate , timePerDay,  maxLengthLesson, userId, activatedPush, notificationTime, timeZone) VALUES (?,?,?,?,?,?,?,?,?,?)",
+     [nameSubject, instructionAi || null, dateStart, dateEnd, timePerDay,  maxLengthLesson || null, userId, activatedPush, notificationTime, timeZone ])
 
        const subjectId =  (rezultatsubjectId[0] as any).insertId
 
