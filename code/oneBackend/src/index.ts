@@ -19,6 +19,9 @@ import {File} from './models/file'
 import { Question } from "./models/question";
 import { extractImagesFromPdf } from 'pdf-extract-image';
 import { Photo } from "./models/photo";
+import { Push } from "./models/push";
+import WebPush from "web-push";
+
 
 //base64 to stream 
 function frombase64tostream( base64: string){
@@ -100,6 +103,9 @@ interface AuthenticatedRequest extends Request {
     [key: string]: any //if you want more ckaims token 
    }
 }
+
+
+WebPush.setVapidDetails(process.env.VAPIDEMAIL!, process.env.VAPIDPUBLICKEY!, process.env.VAPIDPRIVATEKEY!)
 
 
 app.use(
@@ -555,8 +561,6 @@ app.post('/api/addQuiz/:id', async (req: AuthenticatedRequest , res: Response)=>
 
    const subjectId = +req.params.id
 
-   
-
    const [lessons]: any = await baza.execute('SELECT * FROM lessons WHERE subjectId=? AND done=1', [subjectId]) 
    
 
@@ -653,6 +657,67 @@ try{
 }
 
 })
+
+
+app.post('/api/subscription', async (req: AuthenticatedRequest, res: Response)=>{
+  
+
+  try{
+
+     const userId = req.userAuth?.sub
+     const {json}= req.body as Push
+    
+
+     await baza.execute(`INSERT INTO push (userId, json) VALUES (?,?)`, [userId, json])
+ 
+      res.status(201).send({ message: 'Push added successfully'})
+
+  }catch(error){
+
+        console.log("DB Insert Error:", error)
+    res.status(500).send({message: "Server error"})
+
+  }
+
+})
+
+
+
+
+const push = async ()=>{
+
+  const date = new Date()
+
+  date.setMilliseconds(0)
+  date.setSeconds(0)
+  date.setMinutes(0)
+  date.setHours(0)
+
+  const dateString = date.toISOString()
+
+  console.log(dateString)
+
+
+  const [result]: any = await baza.execute(
+    
+    `SELECT DISTINCT p.* FROM lessons as l
+    INNER JOIN subjects as s  ON l.subjectId=s.id
+    INNER JOIN push as p ON p.userId=s.userId
+    WHERE l.date=?
+    `, [dateString])
+
+   
+
+  console.log(result)
+
+
+}
+
+(async ()=>{
+  await push()
+})()
+
+
 
 
 

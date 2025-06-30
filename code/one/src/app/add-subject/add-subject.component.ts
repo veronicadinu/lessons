@@ -16,6 +16,7 @@ import { SubjectsService } from '../services/subjects.service';
 import { AddSubjectRequest } from '../models/addSubjectRequest';
 import { Router } from '@angular/router';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { formatDate } from '../services/dateHelper';
 
 
 
@@ -131,8 +132,8 @@ onUpload(event:any) {
 
       instructionAi: data.instructionAi,
       files: data.files,
-      dateStart: data.date![0].toISOString(),
-      dateEnd: data.date![1].toISOString(),
+      dateStart:  formatDate(data.date![0]),
+      dateEnd:  formatDate(data.date![1]),
       timePerDay: data.timePerDay!.getHours() * 60 + data.timePerDay!.getMinutes(),
       maxLengthLesson: !data.maxLengthLesson ? undefined : data.maxLengthLesson.getHours() * 60 + data.maxLengthLesson.getMinutes()
 

@@ -7,4 +7,5 @@ export interface Subject {
       timePerDay:number
       maxLengthLesson:number | null ,
       
+      
 }

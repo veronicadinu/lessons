@@ -1,4 +1,4 @@
-import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
+import { ApplicationConfig, provideZoneChangeDetection, isDevMode } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { providePrimeNG } from 'primeng/config';
@@ -9,6 +9,7 @@ import { authConfig } from './auth/auth.config';
 import { authInterceptor, provideAuth } from 'angular-auth-oidc-client';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { MessageService } from 'primeng/api';
+import { provideServiceWorker } from '@angular/service-worker';
 
 export const appConfig: ApplicationConfig = {
   providers: [provideZoneChangeDetection({ eventCoalescing: true }),
@@ -23,7 +24,11 @@ export const appConfig: ApplicationConfig = {
             theme: {
                 preset: Aura
             }
-        })
+        }), provideServiceWorker('ngsw-worker.js', {
+            enabled: true,
+            registrationStrategy: 'registerWhenStable:30000'
+          }),
+
 
 ]
 };

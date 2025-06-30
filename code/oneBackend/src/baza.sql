@@ -53,8 +53,27 @@ CREATE TABLE IF NOT EXISTS `questions`(
 `answer` text,
 `quizId` INT NOT NULL,
 PRIMARY KEY (`id`),
-foreign key(`quizId`) references `quiz`(`id`) on delete cascade on update cascade
+FOREIGN KEY (`quizId`) references `quiz`(`id`) on delete cascade on update cascade
 
 
+
+);
+
+
+CREATE TABLE IF NOT EXISTS `photos`(
+`id` int not null auto_increment,
+`fileId` int not null,
+`content` longtext,
+`type` varchar(250),
+PRIMARY KEY (`id`),
+FOREIGN KEY (`fileId`) references `subjects`(`id`) on delete cascade on update cascade
+
+);
+
+CREATE TABLE IF NOT EXISTS `push`(
+`id` int not null auto_increment,
+`userId` varchar(250) not null,
+`json` longtext,
+ PRIMARY KEY (`id`)
 
 );
