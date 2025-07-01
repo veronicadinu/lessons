@@ -18,6 +18,9 @@ import { Router } from '@angular/router';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { formatDate } from '../services/dateHelper';
 import { ToggleButtonModule } from 'primeng/togglebutton';
+import { DropdownModule } from 'primeng/dropdown';
+import { FloatLabelModule } from 'primeng/floatlabel';
+import { SelectModule } from 'primeng/select';
 
 
 
@@ -58,10 +61,11 @@ function fileToBase64(file: File): Promise<string> {
 }
 
 
+
 @Component({
   selector: 'app-add-subject',
-  imports: [ TextareaModule, InputIconModule, InputGroupModule, InputGroupAddonModule, FloatLabel,BadgeModule, ToastModule,
-    FileUpload,CommonModule,DatePickerModule,ButtonModule, ReactiveFormsModule,ProgressSpinnerModule,ToggleButtonModule],
+  imports: [ TextareaModule, InputIconModule, InputGroupModule, InputGroupAddonModule, FloatLabel,BadgeModule, ToastModule,SelectModule,
+    FileUpload,CommonModule,DatePickerModule,ButtonModule, ReactiveFormsModule,ProgressSpinnerModule,ToggleButtonModule,DropdownModule,FloatLabelModule],
   templateUrl: './add-subject.component.html',
   styleUrl: './add-subject.component.css'
 })
@@ -72,8 +76,17 @@ export class AddSubjectComponent implements OnInit {
     loading = false
 
 
+languageOptions = [
+
+    { name: 'English', code: 'English' },
+    { name: 'Italian', code: 'Italian' },
+      
+]
+
+
     form = new FormGroup({
       nameSubject: new FormControl<string>('', [Validators.required]),
+      language: new FormControl<any>(this.languageOptions[0], [Validators.required]),
       instructionAi: new FormControl<string>(''),
       files: new FormControl<string[]>([]),
       date: new FormControl<Date[]>([], [Validators.required, DateValidator]),
@@ -167,7 +180,7 @@ onUpload(event:any) {
 
    const sendBk:AddSubjectRequest = {
     nameSubject: data.nameSubject!,
-
+     language: data.language!.name,
 
       instructionAi: data.instructionAi,
       files: data.files,

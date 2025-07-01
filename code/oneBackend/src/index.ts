@@ -157,6 +157,7 @@ app.post(
       const userId = req.userAuth?.sub;
       const {
         nameSubject,
+        language,
         instructionAi,
         dateEnd,
         dateStart,
@@ -173,15 +174,16 @@ app.post(
         return;
       }
 
-      if (!nameSubject || !dateEnd || !dateStart || !timePerDay) {
+      if (!nameSubject || !dateEnd || !dateStart || !timePerDay || !language) {
         res.status(400).send({ message: "Missing required fields" });
         return;
       }
 
       const rezultatsubjectId = await baza.execute(
-        "INSERT INTO subjects (nameSubject, instructionAi, startDate, endDate , timePerDay,  maxLengthLesson, userId, activatedPush, notificationTime, timeZone) VALUES (?,?,?,?,?,?,?,?,?,?)",
+        "INSERT INTO subjects (nameSubject, language, instructionAi, startDate, endDate , timePerDay,  maxLengthLesson, userId, activatedPush, notificationTime, timeZone) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
         [
           nameSubject,
+          language,
           instructionAi || null,
           dateStart,
           dateEnd,
@@ -238,6 +240,7 @@ app.post(
           text: `    
           
           Act as a teacher. I want to learn the subject: ${nameSubject}. 
+          Use the language: ${language}.
           ${instructionAi ? "follow these instructions:" + instructionAi : ""}
           ${
             listaFiles.length > 0
@@ -418,6 +421,7 @@ app.get("/api/lesson/:id", async (req: AuthenticatedRequest, res: Response) => {
            You are teaching a lesson for the subject : ${
              subject.nameSubject
            }. The title of the lessson is ${lesson.title}.
+           Use the language: ${subject.language}.
 
                      ${
                        subject.instructionAi
@@ -467,6 +471,7 @@ app.get("/api/lesson/:id", async (req: AuthenticatedRequest, res: Response) => {
             subject.nameSubject
           }.
                       The title of the lessson is ${lesson.title}.
+                       Use the language: ${subject.language}.
 
 
                      ${
@@ -622,6 +627,9 @@ app.post(
         [subjectId]
       );
 
+      const [subject]: any = await baza.execute("SELECT * FROM subjects WHERE id=?", [subjectId])
+      console.log(subject)
+
       const listaContent: string[] = lessons.map((l: Lesson) => l.content);
 
       const resposeAi = await ai.models.generateContent({
@@ -629,6 +637,8 @@ app.post(
         contents: `
           Based on the following lessons content: 
           ${listaContent.join("\n\n\n\n\n")}.
+
+           Use the language: ${subject[0].language}.
           
            Create a 10-questions quiz for possible answer only one is corect.
 
@@ -675,7 +685,7 @@ Respond only with json if the following format:
 
       res.status(200).send({ id: quizId });
     } catch (error) {
-      console.log("DB Read Error:", error);
+      console.log("Error:", error);
       res.status(500).send({ message: "Server error" });
     }
   }

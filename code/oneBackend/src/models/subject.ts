@@ -1,6 +1,7 @@
 export interface Subject {
       id: number
       nameSubject: string, 
+      language: string,
       instructionAi: string | null ,
       dateStart: string,
       dateEnd: string

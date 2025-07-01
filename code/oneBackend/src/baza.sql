@@ -5,6 +5,7 @@ USE `one`;
 CREATE TABLE IF NOT EXISTS `subjects`(
 `id` int not null auto_increment,
 `nameSubject` varchar(250) not null,
+`language` varchar(250) not null,
 `instructionAi` longtext,
 `startDate` varchar(200) not null,
 `endDate` varchar(200) not null,
