@@ -11,6 +11,7 @@ import { EditorModule } from 'primeng/editor';
 import { TextToSpeechService } from '../services/speech.service';
 import { HtmltotextService } from '../services/htmltotext.service';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { jsPDF } from "jspdf";
 
 
 
@@ -26,7 +27,7 @@ export class LessonIdComponent implements OnInit, OnDestroy {
 
   idLesson!: number
 
-  isSpeeching = false
+  isSpeeching = false;
 
 
 
@@ -82,9 +83,44 @@ export class LessonIdComponent implements OnInit, OnDestroy {
     this.isSpeeching = true
   }
 
+  clickPause(){
+    this.tss.pause()
+    this.isSpeeching= false
+
+  }
+
+  clickResume(){
+    this.tss.resume()
+    this.isSpeeching = true
+
+  }
+
   stopSpeech(){
     this.tss.stop()
     this.isSpeeching = false
   }
+
+
+  downloadLesson(){
+
+  if (!this.lesson || !this.lesson.content) return;
+
+  // Extract plain text from HTML content
+  const text = this.htmltotext.extractTextFromHtml(this.lesson.content).replaceAll("_", "");
+
+  // Create a new jsPDF instance
+  const doc = new jsPDF();
+
+  // Add the text to the PDF (starting at position x=10, y=10)
+  doc.text(text, 10, 10);
+
+  // Save the PDF with a file name
+  doc.save('lesson.pdf');
+
+
+    
+
+  }
+  
 
 }
