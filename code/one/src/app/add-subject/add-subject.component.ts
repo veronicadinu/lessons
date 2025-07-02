@@ -16,6 +16,11 @@ import { SubjectsService } from '../services/subjects.service';
 import { AddSubjectRequest } from '../models/addSubjectRequest';
 import { Router } from '@angular/router';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { formatDate } from '../services/dateHelper';
+import { ToggleButtonModule } from 'primeng/togglebutton';
+import { DropdownModule } from 'primeng/dropdown';
+import { FloatLabelModule } from 'primeng/floatlabel';
+import { SelectModule } from 'primeng/select';
 
 
 
@@ -56,10 +61,11 @@ function fileToBase64(file: File): Promise<string> {
 }
 
 
+
 @Component({
   selector: 'app-add-subject',
-  imports: [ TextareaModule, InputIconModule, InputGroupModule, InputGroupAddonModule, FloatLabel,BadgeModule, ToastModule,
-    FileUpload,CommonModule,DatePickerModule,ButtonModule, ReactiveFormsModule,ProgressSpinnerModule],
+  imports: [ TextareaModule, InputIconModule, InputGroupModule, InputGroupAddonModule, FloatLabel,BadgeModule, ToastModule,SelectModule,
+    FileUpload,CommonModule,DatePickerModule,ButtonModule, ReactiveFormsModule,ProgressSpinnerModule,ToggleButtonModule,DropdownModule,FloatLabelModule],
   templateUrl: './add-subject.component.html',
   styleUrl: './add-subject.component.css'
 })
@@ -70,13 +76,25 @@ export class AddSubjectComponent implements OnInit {
     loading = false
 
 
+languageOptions = [
+
+    { name: 'English', code: 'English' },
+    { name: 'Italian', code: 'Italian' },
+     { name: 'Romania', code: 'Romania' },
+      
+]
+
+
     form = new FormGroup({
       nameSubject: new FormControl<string>('', [Validators.required]),
+      language: new FormControl<any>(this.languageOptions[0], [Validators.required]),
       instructionAi: new FormControl<string>(''),
       files: new FormControl<string[]>([]),
       date: new FormControl<Date[]>([], [Validators.required, DateValidator]),
       timePerDay: new FormControl<Date | undefined>(undefined, [Validators.required]),
       maxLengthLesson: new FormControl<Date | undefined>(undefined),
+      activatedPush: new FormControl<boolean>(true),
+      notificationTime: new FormControl<Date | undefined>(undefined),
       
 
     })
@@ -105,7 +123,43 @@ onUpload(event:any) {
  ngOnInit(): void {
   //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
   //Add 'implements OnInit' to the class.
+
+  this.form.get('notificationTime')!.valueChanges.subscribe({
+    next: (date)=>{
+      if(date){
+        date.setSeconds(0)
+        date.setMinutes(0)
+        date.setMilliseconds(0)
+
+        this.form.get('notificationTime')!.setValue(date, {
+          emitEvent: false
+        })
+      }
+    },
+
+  })
   
+
+  const date0 = new Date()
+  date0.setHours(0)
+  date0.setSeconds(0)
+  date0.setMinutes(0)
+ date0.setMilliseconds(0)
+
+
+   const date = new Date()
+  date.setHours(10)
+  date.setSeconds(0)
+  date.setMinutes(0)
+ date.setMilliseconds(0)
+
+
+ this.form.get('timePerDay')!.setValue(date0)
+ this.form.get('maxLengthLesson')!.setValue(date0)
+ this.form.get('notificationTime')!.setValue(date)
+
+
+
  }
 
 
@@ -127,14 +181,18 @@ onUpload(event:any) {
 
    const sendBk:AddSubjectRequest = {
     nameSubject: data.nameSubject!,
-
+     language: data.language!.name,
 
       instructionAi: data.instructionAi,
       files: data.files,
-      dateStart: data.date![0].toISOString(),
-      dateEnd: data.date![1].toISOString(),
+      dateStart:  formatDate(data.date![0]),
+      dateEnd:  formatDate(data.date![1]),
       timePerDay: data.timePerDay!.getHours() * 60 + data.timePerDay!.getMinutes(),
-      maxLengthLesson: !data.maxLengthLesson ? undefined : data.maxLengthLesson.getHours() * 60 + data.maxLengthLesson.getMinutes()
+      maxLengthLesson: !data.maxLengthLesson ? undefined : data.maxLengthLesson.getHours() * 60 + data.maxLengthLesson.getMinutes(),
+      activatedPush: data.activatedPush! ,
+      notificationTime: data.notificationTime? data.notificationTime.getHours() : null,
+      timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
+
 
    }
 

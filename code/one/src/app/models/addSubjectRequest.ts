@@ -1,12 +1,16 @@
 export interface AddSubjectRequest {
 
       nameSubject: string, 
+      language: string,
       instructionAi: string | null |undefined,
       files: string[] | null |undefined,
       dateStart: string,
       dateEnd: string
       timePerDay:number
       maxLengthLesson:number | null |undefined,
+      activatedPush: boolean 
+      notificationTime: number | null
+      timeZone: string
       
 }
 

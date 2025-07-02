@@ -43,6 +43,10 @@ export class SubjectIdComponent implements OnInit {
 
     eventOrder: 'id',
 
+    timeZone: 'local',
+
+
+
 
 
 
@@ -82,7 +86,7 @@ export class SubjectIdComponent implements OnInit {
 
            const events: EventSourceInput = this.lessons.map(l => {
             return {title: l.title + '-' + l.durationMinutes +'min',
-               date: l.date.split('T')[0],
+               date: l.date,
                id: l.id + "",
                color: l.done ? "green" : "red"
               }

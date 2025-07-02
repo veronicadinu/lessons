@@ -5,11 +5,15 @@ USE `one`;
 CREATE TABLE IF NOT EXISTS `subjects`(
 `id` int not null auto_increment,
 `nameSubject` varchar(250) not null,
+`language` varchar(250) not null,
 `instructionAi` longtext,
 `startDate` varchar(200) not null,
 `endDate` varchar(200) not null,
 `timePerDay` int not null,
 `maxLengthLesson` int ,
+`activatedPush` boolean,
+`notificationTime` int,
+`timeZone` varchar(200) not null,
 `userId` varchar(200) not null,
 PRIMARY KEY (`id`)
 );
@@ -53,8 +57,27 @@ CREATE TABLE IF NOT EXISTS `questions`(
 `answer` text,
 `quizId` INT NOT NULL,
 PRIMARY KEY (`id`),
-foreign key(`quizId`) references `quiz`(`id`) on delete cascade on update cascade
+FOREIGN KEY (`quizId`) references `quiz`(`id`) on delete cascade on update cascade
 
 
+
+);
+
+
+CREATE TABLE IF NOT EXISTS `photos`(
+`id` int not null auto_increment,
+`fileId` int not null,
+`content` longtext,
+`type` varchar(250),
+PRIMARY KEY (`id`),
+FOREIGN KEY (`fileId`) references `subjects`(`id`) on delete cascade on update cascade
+
+);
+
+CREATE TABLE IF NOT EXISTS `push`(
+`id` int not null auto_increment,
+`userId` varchar(250) not null,
+`json` longtext,
+ PRIMARY KEY (`id`)
 
 );

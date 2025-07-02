@@ -4,9 +4,13 @@ export interface SubjectInterface {
     instructionAi: string,
     maxLengthLesson: number
     nameSubject: string,
+    language: string,
     startDate: string
     timePerDay: number
     userId: string
+          activatedPush: boolean 
+      notificationTime: number | null
+      timeZone: string
 
 
 }

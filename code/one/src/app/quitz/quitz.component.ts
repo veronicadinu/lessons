@@ -13,6 +13,7 @@ import { ButtonModule } from 'primeng/button';
 import { ListboxModule } from 'primeng/listbox';
 
 import { DialogModule } from 'primeng/dialog';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-quitz',
@@ -25,6 +26,7 @@ export class QuitzComponent implements OnInit {
   quizId!: number 
 
   quiz!: Quiz 
+
 
   questios: Questions[] = []  // api questions
 
@@ -41,6 +43,9 @@ export class QuitzComponent implements OnInit {
   ngOnInit(): void {
     //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
     //Add 'implements OnInit' to the class.
+
+
+    
 
 
     this.quizId = Number(this.route.snapshot.paramMap.get("id"))
@@ -84,7 +89,7 @@ export class QuitzComponent implements OnInit {
   }
 
   get score(){
-  return  this.questios.filter(q=> q.answer === q.correctLetter).length
+  return  this.questios.filter(q=> q.answer?.toLowerCase() === q.correctLetter.toLowerCase()).length
 
   }
 

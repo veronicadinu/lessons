@@ -14,6 +14,7 @@
     "@types/express": "^5.0.3",
     "@types/express-jwt": "^6.0.4",
     "@types/node": "^22.15.30",
+    "@types/web-push": "^3.6.4",
     "nodemon": "^3.1.10",
     "ts-node": "^10.9.2",
     "tsx": "^4.20.1",
@@ -22,12 +23,15 @@
   "dependencies": {
     "@google/genai": "^1.5.0",
     "@modelcontextprotocol/sdk": "^1.12.3",
+    "dayjs": "^1.11.13",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "express-jwt": "^8.5.1",
     "jwks-rsa": "^3.2.0",
     "mysql2": "^3.14.1",
+    "node-cron": "^4.1.1",
     "pdf-extract-image": "^0.0.3",
-    "pdf-ts": "^0.0.2"
+    "pdf-ts": "^0.0.2",
+    "web-push": "^3.6.7"
   }
 }

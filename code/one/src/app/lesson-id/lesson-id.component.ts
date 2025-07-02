@@ -10,13 +10,13 @@ import { AccordionModule } from 'primeng/accordion';
 import { EditorModule } from 'primeng/editor';
 import { TextToSpeechService } from '../services/speech.service';
 import { HtmltotextService } from '../services/htmltotext.service';
-
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 
 
 @Component({
   selector: 'app-lesson-id',
-  imports: [ButtonModule, PanelModule,ToggleButtonModule,FormsModule,AccordionModule,EditorModule],
+  imports: [ButtonModule, PanelModule,ToggleButtonModule,FormsModule,AccordionModule,EditorModule,ProgressSpinnerModule],
   templateUrl: './lesson-id.component.html',
   styleUrl: './lesson-id.component.css'
 })

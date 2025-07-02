@@ -30,7 +30,7 @@
                          <ng-template #item let-answer>
         <div class="flex items-center gap-2">
            
-            <div [style.color]="!q.answer ? 'black' : (q.correctLetter === answer.code ? 'green' : (q.answer === answer.code ? 'red' : 'black'))" [style.font-weight]="q.answer === answer.code ? 'bold' : ''">{{ answer.name }}</div>
+            <div [style.color]="!q.answer ? 'black' : (q.correctLetter.toLowerCase() === answer.code.toLowerCase()? 'green' : (q.answer.toLowerCase() === answer.code.toLowerCase() ? 'red' : 'black'))" [style.font-weight]="q.answer?.toLowerCase() === answer.code.toLowerCase() ? 'bold' : ''">{{ answer.name }}</div>
         </div>
     </ng-template>
                         
@@ -53,7 +53,7 @@
     </ng-template>
     <span class="text-surface-500 dark:text-surface-400 block mb-8">Congrats 🎉 🎉 🎉 ! Your score is: {{score}}/{{questios.length}}</span>
     <ng-template #footer>
-        <p-button [routerLink]="['/subject/'+ quizId]" label="Cancel" [text]="true" severity="secondary" (click)="visible = false" />
+        <p-button [routerLink]="['/subject/'+ quiz.subjectId]" label="Cancel" [text]="true" severity="secondary" (click)="visible = false" />
     </ng-template>
 </p-dialog>
                   }
