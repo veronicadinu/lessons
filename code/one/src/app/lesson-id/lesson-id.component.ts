@@ -111,8 +111,29 @@ export class LessonIdComponent implements OnInit, OnDestroy {
   // Create a new jsPDF instance
   const doc = new jsPDF();
 
-  // Add the text to the PDF (starting at position x=10, y=10)
-  doc.text(text, 10, 10);
+ // Define max width for text area on the PDF page (e.g., 180 for A4 width with margin)
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const margin = 10;
+  const maxLineWidth = pageWidth - margin * 2;
+
+  // Split text into lines that fit max width
+  const lines = doc.splitTextToSize(text, maxLineWidth);
+
+  // Starting Y position on the page
+  let y = margin;
+
+  // Define line height (height between lines)
+  const lineHeight = 10;
+
+  // Loop through lines and add them to the PDF, adding new pages as needed
+  for (let i = 0; i < lines.length; i++) {
+    if (y > doc.internal.pageSize.getHeight() - margin) {
+      doc.addPage();
+      y = margin;
+    }
+    doc.text(lines[i], margin, y);
+    y += lineHeight;
+  }
 
   // Save the PDF with a file name
   doc.save('lesson.pdf');
