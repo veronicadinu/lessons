@@ -21,7 +21,12 @@
 
 <p-accordion>
     <p-accordion-panel  value="0">
-        <p-accordion-header>If you want to see the hole lesson. Click here...</p-accordion-header>
+        <p-accordion-header>
+            <div style="display: flex; flex-direction: row; align-items: center; justify-content: space-between; width: 100%;" >
+                <p> If you want to see the hole lesson. Click here...</p>
+                 <p-button (click)="downloadLesson()" label="Download lesson" />
+            </div>
+           </p-accordion-header>
         <p-accordion-content>
                @if(lesson){
           <p-editor [(ngModel)]="lesson!.content" />
@@ -49,9 +54,26 @@
 
              
           @if(lesson){
-              <p-button (click)="clickSpeech()" label="Speech" />
 
-                <p-button (click)="stopSpeech()" label="Stop" />
+
+            @if(!isSpeeching){
+
+            <p-button icon="pi pi-volume-up" [rounded]="true" [outlined]="true"  (click)="clickSpeech()" label="Speech" />
+            <p-button icon="pi pi-play" [rounded]="true" [outlined]="true"  (click)="clickResume()" label="Resume" />
+        
+            } @else {
+             <p-button icon="pi pi-stop" [rounded]="true" [outlined]="true" (click)="stopSpeech()" label="Stop"/>
+             <p-button icon="pi pi-pause-circle" [rounded]="true" [outlined]="true" (click)="clickPause()" label="Pause"/>
+               
+              
+                   
+                
+
+            }
+
+              
+
+                
 
               
           }

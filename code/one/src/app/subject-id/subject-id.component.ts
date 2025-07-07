@@ -11,14 +11,24 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import { ListboxModule } from 'primeng/listbox';
 import { Quiz } from '../models/quiz';
 import { AccordionModule } from 'primeng/accordion';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { DialogModule } from 'primeng/dialog';
+import { PanelModule } from 'primeng/panel';
+
+
 
 @Component({
   selector: 'app-subject-id',
-  imports: [ButtonModule, CommonModule, RouterModule, FullCalendarModule,ListboxModule, AccordionModule ],
+  imports: [ButtonModule, CommonModule, RouterModule, FullCalendarModule, ListboxModule, AccordionModule, 
+    ProgressSpinnerModule, DialogModule, PanelModule],
   templateUrl: './subject-id.component.html',
   styleUrl: './subject-id.component.css'
 })
 export class SubjectIdComponent implements OnInit {
+
+   visible: boolean = false;
+
+    
 
    calendarOptions: CalendarOptions = {
     initialView: 'dayGridMonth',
@@ -64,6 +74,8 @@ export class SubjectIdComponent implements OnInit {
   lessons : Lesson[]= []
 
   quizzes: Quiz[] = []
+
+  loading: boolean = false;
 
  
 
@@ -138,10 +150,15 @@ export class SubjectIdComponent implements OnInit {
   }
 
   clickquiz(){
+    this.visible = true;
+     this.loading = true;
+
    this.serverSubject.addQuizbySubjectId(this.subjectId).subscribe({
     next: (data)=>{
-      if(data && data.id){
 
+      this.loading= false
+
+      if(data && data.id){
       console.log(data.id)
       this.router.navigateByUrl(`/quiz/${data.id}`)
       }

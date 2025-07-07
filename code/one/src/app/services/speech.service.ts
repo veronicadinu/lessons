@@ -51,4 +51,27 @@ export class TextToSpeechService {
 
     this.synth.speak(utterance);
   }
+
+
+    // ✅ Add pause function
+  pause(): void {
+    if (this.synth.speaking && !this.synth.paused) {
+      this.synth.pause();
+    }
+  }
+
+
+  
+  // ✅ Add resume function
+  resume(): void {
+    if (this.synth.paused) {
+      this.synth.resume();
+    }
+  }
+
+
+
+
+
+
 }
