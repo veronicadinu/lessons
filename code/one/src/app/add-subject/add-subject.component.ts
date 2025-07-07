@@ -24,6 +24,7 @@ import { SelectModule } from 'primeng/select';
 
 
 
+
 const DateValidator = (control: AbstractControl) => {
       const value = control.value
 
@@ -209,6 +210,7 @@ onUpload(event:any) {
     },
     error: error=>{
             this.loading = false
+            this.messageService.add({severity: 'error', summary: 'Error', detail:'Error fetching lessons data' })
             console.error('Error fetching lessons data:', error);
     }
    })

@@ -101,7 +101,7 @@ export class LessonIdComponent implements OnInit, OnDestroy {
   }
 
 
-  downloadLesson(){
+ async downloadLesson(){
 
   if (!this.lesson || !this.lesson.content) return;
 
@@ -135,8 +135,25 @@ export class LessonIdComponent implements OnInit, OnDestroy {
     y += lineHeight;
   }
 
-  // Save the PDF with a file name
-  doc.save('lesson.pdf');
+    // Convert PDF to Blob and wrap it as a File
+  const pdfBlob = doc.output('blob');
+  const file = new File([pdfBlob], "lesson.pdf", { type: "application/pdf" });
+
+  
+  // Check if Web Share API with file support is available
+  if (navigator.canShare && navigator.canShare({ files: [file] })) {
+    try {
+      await navigator.share({
+        title: 'Lesson PDF',
+        text: 'Check out this lesson.',
+        files: [file]
+      });
+    } catch (err) {
+      console.error("Sharing failed:", err);
+    }
+  } else {
+    alert("Sharing is not supported on this browser. Please download the PDF instead.");
+  }
 
 
     
