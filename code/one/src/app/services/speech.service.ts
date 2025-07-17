@@ -10,11 +10,11 @@ export class TextToSpeechService {
 
   constructor() {
     this.synth = window.speechSynthesis;
-
+    this.voicesSubject.next([...this.synth.getVoices().filter(x => !x.localService), ...this.synth.getVoices().filter(x => x.localService)]);
       // ✅ Load voices when available
     if (this.synth.onvoiceschanged !== undefined) {
       this.synth.onvoiceschanged = () => {
-        this.voicesSubject.next(this.synth.getVoices().filter(x => !x.localService));
+        this.voicesSubject.next([...this.synth.getVoices().filter(x => !x.localService), ...this.synth.getVoices().filter(x => x.localService)]);
         console.log("✅ xxxVoices loaded:", this.voicesSubject.value);
       };
     }

@@ -296,7 +296,7 @@ app.post(
       }
 
       const response = await ai.models.generateContent({
-        model: "gemini-2.0-flash",
+        model: "gemini-2.5-flash",
         contents: contents,
       });
 
@@ -461,7 +461,7 @@ app.get("/api/lesson/:id", async (req: AuthenticatedRequest, res: Response) => {
       }
 
       const resposeAI = ai.models.generateContent({
-        model: "gemini-2.0-flash",
+        model: "gemini-2.5-flash",
         contents: contents1,
       });
 
@@ -509,7 +509,7 @@ app.get("/api/lesson/:id", async (req: AuthenticatedRequest, res: Response) => {
       }
 
       const resposeAiSummery = ai.models.generateContent({
-        model: "gemini-2.0-flash",
+        model: "gemini-2.5-flash",
         contents: contents2,
       });
 
@@ -633,7 +633,7 @@ app.post(
       const listaContent: string[] = lessons.map((l: Lesson) => l.content);
 
       const resposeAi = await ai.models.generateContent({
-        model: "gemini-2.0-flash",
+        model: "gemini-2.5-flash",
         contents: `
           Based on the following lessons content: 
           ${listaContent.join("\n\n\n\n\n")}.
