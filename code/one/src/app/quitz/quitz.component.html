@@ -1,79 +1,119 @@
 
-
 @if(quiz){
-    <div style="height: 100%; width: 100%;">
+  <div class="w-full h-full p-4">
 
-    <h3 style="width: 100%;text-align: center;">Test {{quiz.id}} made in {{quiz.date | date: 'fullDate'}}</h3>
+    <h3 class="w-full text-center text-lg font-semibold mb-2">
+      Test {{quiz.id}} made in {{quiz.date | date: 'fullDate'}}
+    </h3>
 
-    <h4>Score: {{score}}/{{questios.length}}</h4>
-    
-    <p-stepper  [value]="1" >
+    <h4 class="text-center text-base mb-4">
+      Score: {{score}}/{{questios.length}}
+    </h4>
 
-        @for(q of questios; track q.id; let i = $index){
-             <p-step-item pButtonLabel [value]="i+1">
-        <p-step >Question{{i + 1}}</p-step>
-        <p-step-panel>
+    <p-stepper [value]="1">
+
+      @for(q of questios; track q.id; let i = $index){
+        <p-step-item pButtonLabel [value]="i+1">
+          <p-step>Question {{i + 1}}</p-step>
+          <p-step-panel>
             <ng-template #content let-activateCallback="activateCallback">
 
-                <div class="flex flex-col h-48">
-                  <p><strong>{{ q.content }}</strong></p>
-                       <p-listbox [highlightOnSelect]="false" [options]="[{code: 'a', name: 'a. '+ q.a, question: q},
-                       {code: 'b', name: 'b. '+ q.b},
-                       {code: 'c', name: 'c. '+ q.c},
-                       {code: 'd', name: 'd. '+ q.d}]"
-                        [(ngModel)]="q.answer" 
-                        [disabled]="q.answer != null"
-                         optionLabel="name"
-                         optionValue="code"
-                         class="w-full md:w-56" >
-                        
-                         <ng-template #item let-answer>
-        <div class="flex items-center gap-2">
-           
-            <div [style.color]="!q.answer ? 'black' : (q.correctLetter.toLowerCase() === answer.code.toLowerCase()? 'green' : (q.answer.toLowerCase() === answer.code.toLowerCase() ? 'red' : 'black'))" [style.font-weight]="q.answer?.toLowerCase() === answer.code.toLowerCase() ? 'bold' : ''">{{ answer.name }}</div>
-        </div>
-    </ng-template>
-                        
-                        
-                        </p-listbox>
-                         
-                </div>
+              <div class="flex flex-col h-auto max-h-96 overflow-y-auto px-2">
+                <p class="text-base break-words max-w-full mb-2">
+                  <strong>{{ q.content }}</strong>
+                </p>
 
-                <div class="flex gap-2 mt-4">
-                  @if(i > 0) {
-                    <p-button label="Back" severity="secondary" (onClick)="activateCallback(i)" />
-                  }
-                  @if(i< questios.length - 1) {
-                    <p-button label="Next" (onClick)="activateCallback(i + 2)" />
-                  } @else {
-                    <p-button (click)="showDialog()" [disabled]="disableButton()" (click)="submit()" label="Finish" severity="success" />
-                    <p-dialog [(visible)]="visible" [modal]="true" [style]="{ width: '25rem' }">
-    <ng-template #header>
-        
-    </ng-template>
-    <span class="text-surface-500 dark:text-surface-400 block mb-8">Congrats 🎉 🎉 🎉 ! Your score is: {{score}}/{{questios.length}}</span>
-    <ng-template #footer>
-        <p-button [routerLink]="['/subject/'+ quiz.subjectId]" label="Cancel" [text]="true" severity="secondary" (click)="visible = false" />
-    </ng-template>
-</p-dialog>
-                  }
-                </div>
+                <p-listbox
+                  [highlightOnSelect]="false"
+                  [options]="[
+                    {code: 'a', name: 'a. ' + q.a},
+                    {code: 'b', name: 'b. ' + q.b},
+                    {code: 'c', name: 'c. ' + q.c},
+                    {code: 'd', name: 'd. ' + q.d}
+                  ]"
+                  [(ngModel)]="q.answer"
+                  [disabled]="q.answer != null"
+                  optionLabel="name"
+                  optionValue="code"
+                  class="w-full sm:w-64 max-w-full mt-2"
+                >
+                  <ng-template #item let-answer>
+                    <div class="flex items-center gap-2">
+                      <div
+                        [style.color]="
+                          !q.answer
+                            ? 'black'
+                            : q.correctLetter.toLowerCase() === answer.code.toLowerCase()
+                            ? 'green'
+                            : q.answer.toLowerCase() === answer.code.toLowerCase()
+                            ? 'red'
+                            : 'black'
+                        "
+                        [style.font-weight]="
+                          q.answer?.toLowerCase() === answer.code.toLowerCase() ? 'bold' : ''
+                        "
+                      >
+                        {{ answer.name }}
+                      </div>
+                    </div>
+                  </ng-template>
+                </p-listbox>
+              </div>
+
+              <div class="flex flex-wrap gap-2 mt-4 justify-center sm:justify-start">
+                @if(i > 0) {
+                  <p-button
+                    label="Back"
+                    severity="secondary"
+                    (onClick)="activateCallback(i)"
+                  />
+                }
+                @if(i < questios.length - 1) {
+                  <p-button
+                    label="Next"
+                    (onClick)="activateCallback(i + 2)"
+                  />
+                } @else {
+                  <p-button
+                    (click)="showDialog(); submit()"
+                    [disabled]="disableButton()"
+                    label="Finish"
+                    severity="success"
+                  />
+
+                  <p-dialog
+                    [(visible)]="visible"
+                    [modal]="true"
+                    [style]="{ width: '90%', maxWidth: '25rem' }"
+                  >
+                    <ng-template #header>
+                      <h5 class="text-lg font-semibold text-center w-full">Well done!</h5>
+                    </ng-template>
+
+                    <span class="text-surface-500 dark:text-surface-400 block mb-8 text-center">
+                      🎉 Congrats! Your score is: {{score}}/{{questios.length}} 🎉
+                    </span>
+
+                    <ng-template #footer>
+                      <p-button
+                        [routerLink]="['/quizAll/' + quiz.subjectId]"
+                        label="Back to list of quiz"
+                        [text]="true"
+                        severity="secondary"
+                        (click)="visible = false"
+                      />
+                    </ng-template>
+                  </p-dialog>
+                }
+              </div>
             </ng-template>
-        </p-step-panel>
-    </p-step-item>
+          </p-step-panel>
+        </p-step-item>
+      }
 
-        }
-
-
-
-
- 
-
-</p-stepper>
-
-
-</div>
+    </p-stepper>
+  </div>
 } @else {
-    ...loading
-
+  ...loading
 }
+

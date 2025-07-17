@@ -3,7 +3,6 @@ import { TextareaModule } from 'primeng/textarea';
 import { InputIconModule } from 'primeng/inputicon';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
-import { FloatLabel } from 'primeng/floatlabel';
 import { ToastModule } from 'primeng/toast';
 import { FileUpload } from 'primeng/fileupload';
 import { BadgeModule } from 'primeng/badge';
@@ -21,6 +20,8 @@ import { ToggleButtonModule } from 'primeng/togglebutton';
 import { DropdownModule } from 'primeng/dropdown';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { SelectModule } from 'primeng/select';
+
+
 
 
 
@@ -63,25 +64,32 @@ function fileToBase64(file: File): Promise<string> {
 
 
 
+
 @Component({
   selector: 'app-add-subject',
-  imports: [ TextareaModule, InputIconModule, InputGroupModule, InputGroupAddonModule, FloatLabel,BadgeModule, ToastModule,SelectModule,
-    FileUpload,CommonModule,DatePickerModule,ButtonModule, ReactiveFormsModule,ProgressSpinnerModule,ToggleButtonModule,DropdownModule,FloatLabelModule],
+  imports: [ TextareaModule, InputIconModule, InputGroupModule, InputGroupAddonModule,BadgeModule, ToastModule,SelectModule,
+    FileUpload,CommonModule,DatePickerModule,ButtonModule, ReactiveFormsModule,ProgressSpinnerModule,ToggleButtonModule,DropdownModule,
+    FloatLabelModule,],
   templateUrl: './add-subject.component.html',
   styleUrl: './add-subject.component.css'
 })
 export class AddSubjectComponent implements OnInit {
+
+ 
+   
 
     uploadedFiles: any[] = [];
 
     loading = false
 
 
+
+
 languageOptions = [
 
-    { name: 'English', code: 'English' },
-    { name: 'Italian', code: 'Italian' },
-     { name: 'Romania', code: 'Romania' },
+    { name: 'English', code: 'en-US' },
+    { name: 'Italian', code: 'it-IT' },
+    { name: 'Romanian', code: 'ro-RO' },
       
 ]
 
@@ -125,6 +133,8 @@ onUpload(event:any) {
   //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
   //Add 'implements OnInit' to the class.
 
+      
+
   this.form.get('notificationTime')!.valueChanges.subscribe({
     next: (date)=>{
       if(date){
@@ -142,7 +152,7 @@ onUpload(event:any) {
   
 
   const date0 = new Date()
-  date0.setHours(0)
+  date0.setHours(1)
   date0.setSeconds(0)
   date0.setMinutes(0)
  date0.setMilliseconds(0)
@@ -182,7 +192,7 @@ onUpload(event:any) {
 
    const sendBk:AddSubjectRequest = {
     nameSubject: data.nameSubject!,
-     language: data.language!.name,
+     language: data.language!.code,
 
       instructionAi: data.instructionAi,
       files: data.files,
@@ -222,5 +232,14 @@ onUpload(event:any) {
 
 
  }
+
+
+
+
+
+
+    
+
+
 
 }

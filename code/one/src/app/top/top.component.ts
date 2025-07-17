@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ToolbarModule } from 'primeng/toolbar';
 import { ButtonModule } from 'primeng/button';
 import { AvatarModule } from 'primeng/avatar';
@@ -10,18 +10,27 @@ import { CommonModule } from '@angular/common';
 import { SpeedDialModule } from 'primeng/speeddial';
 import { MenuItem } from 'primeng/api';
 import { RouterModule } from '@angular/router';
+import { Drawer, DrawerModule } from 'primeng/drawer';
 
 
 @Component({
   selector: 'app-top',
-  imports: [ToolbarModule, ButtonModule, AvatarModule, ChipModule, MenuModule, CommonModule, SpeedDialModule,RouterModule],
+  imports: [ToolbarModule, ButtonModule, AvatarModule, ChipModule, MenuModule, CommonModule, SpeedDialModule,RouterModule,DrawerModule],
   templateUrl: './top.component.html',
   styleUrl: './top.component.css'
 })
 export class TopComponent implements OnInit {
 
+      @ViewChild('drawerRef') drawerRef!: Drawer;
+
+    closeCallback(e: any ): void {
+        this.drawerRef.close(e);
+    }
+
+    visible: boolean = false;
+
   user: User | undefined
-      items: MenuItem[] | undefined;
+  items: MenuItem[] | undefined;
 
 
   constructor(public oidc: OidcSecurityService){}

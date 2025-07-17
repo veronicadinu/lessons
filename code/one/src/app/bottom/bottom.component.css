@@ -1,0 +1,9 @@
+::ng-deep .p-button.p-button-text.p-button-secondary {
+  color: #6c757d;
+  transition: color 0.3s ease;
+}
+
+::ng-deep .p-button.p-button-text.p-button-secondary:hover {
+  color: #2ecc71;
+  background-color: transparent;
+}

@@ -12,12 +12,12 @@ import { TextToSpeechService } from '../services/speech.service';
 import { HtmltotextService } from '../services/htmltotext.service';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { jsPDF } from "jspdf";
-
+import { SplitButtonModule } from 'primeng/splitbutton';
 
 
 @Component({
   selector: 'app-lesson-id',
-  imports: [ButtonModule, PanelModule,ToggleButtonModule,FormsModule,AccordionModule,EditorModule,ProgressSpinnerModule],
+  imports: [ButtonModule, PanelModule,ToggleButtonModule,FormsModule,AccordionModule,EditorModule,ProgressSpinnerModule,SplitButtonModule],
   templateUrl: './lesson-id.component.html',
   styleUrl: './lesson-id.component.css'
 })
@@ -26,6 +26,8 @@ export class LessonIdComponent implements OnInit, OnDestroy {
   lesson:Lesson | null = null
 
   idLesson!: number
+
+  langauges: string = ''
 
   isSpeeching = false;
 
@@ -45,7 +47,11 @@ export class LessonIdComponent implements OnInit, OnDestroy {
 
     this.subjectService.getLessonbyId(this.idLesson).subscribe({
       next: (data)=>{
-        this.lesson = data
+        this.lesson = data;
+
+        this.subjectService.getSubjetId(this.lesson.subjectId).subscribe({next: (s)=>{
+              this.langauges= s.language
+        }})
       },
       error: (error)=>{ console.error('Error fetching lessons data:', error); }
     }
@@ -53,7 +59,17 @@ export class LessonIdComponent implements OnInit, OnDestroy {
     
 
     )
+
+  
     
+  }
+
+
+  get isTtsEnabled() {
+    if (!this.langauges) {
+      return false;
+    }
+    return this.tss.isLanguageSupported(this.langauges);
   }
 
 
@@ -78,9 +94,10 @@ export class LessonIdComponent implements OnInit, OnDestroy {
 
     const text = this.htmltotext.extractTextFromHtml(this.lesson!.content).replaceAll("_", "")
 
-    this.tss.speak(text)
+    this.tss.speak(text, this.langauges)
     console.log(text)
     this.isSpeeching = true
+    
   }
 
   clickPause(){

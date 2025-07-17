@@ -1,80 +1,150 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-wrapper">
 
+  <h2 class="form-title">What do you want to learn?</h2>
 
+  @if (!loading) {
+    <ng-container>
 
+      <!-- Subject Name -->
+      <div class="form-field">
+        <div class="field-question">What is the name of the subject you want to learn?</div>
+        <p-floatlabel>
+          <textarea
+            pInputTextarea
+            id="nameSubject"
+            formControlName="nameSubject"
+            autoResize="true"
+            rows="1"
+            placeholder=" ">
+          </textarea>
+          <label for="nameSubject">Subject Name</label>
+        </p-floatlabel>
+      </div>
 
-<form [formGroup]="form" (ngSubmit)="onSubmit()" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; width: 100%; gap: 1rem;">
+      <!-- Language -->
+      <div class="form-field">
+        <div class="field-question">Which language would you like to learn this subject in?</div>
+        <p-floatlabel>
+          <p-select
+            inputId="language"
+            [options]="languageOptions"
+            formControlName="language"
+            optionLabel="name"
+            styleClass="w-full"
+            placeholder=" ">
+          </p-select>
+          <label for="language">Language</label>
+        </p-floatlabel>
+      </div>
 
-    <h3>Add your Preferred Subject!!!</h3>
+      <!-- File Upload -->
+      <div class="form-field">
+        <div class="field-question">Do you have any PDFs to upload for better guidance?</div>
+        <label class="field-label">Upload PDFs</label>
+        <p-fileupload
+          [multiple]="true"
+          mode="advanced"
+          accept="application/pdf"
+          [showCancelButton]="false"
+          [showUploadButton]="false"
+          (onSelect)="onUpload($event)"
+          (onRemove)="onRemove($event)">
+          <ng-template #empty>
+            <div>Drag and drop PDF files here.</div>
+          </ng-template>
+        </p-fileupload>
+      </div>
 
-    @if(!loading){
+      <!-- Prompt for AI -->
+      <div class="form-field">
+        <div class="field-question">What prompt or instructions should the AI follow?</div>
+        <p-floatlabel>
+          <textarea
+            pInputTextarea
+            formControlName="instructionAi"
+            rows="3"
+            placeholder=" ">
+          </textarea>
+          <label for="instructionAi">Prompt for AI</label>
+        </p-floatlabel>
+      </div>
 
-        <ng-container  >
+      <!-- Date Range -->
+      <div class="form-field">
+        <div class="field-question">Select your preferred start and end dates:</div>
+        <p-floatlabel>
+          <p-datepicker
+            formControlName="date"
+            selectionMode="range"
+            [readonlyInput]="true"
+            placeholder=" ">
+          </p-datepicker>
+          <label for="date">Start - End Date</label>
+        </p-floatlabel>
+      </div>
 
-<p-floatlabel variant="on">
-    <input pTextarea id="on_label" formControlName="nameSubject" autocomplete="off"/>
-    <label for="on_label">Name Subject</label>
-</p-floatlabel>
+      <!-- Time Per Day -->
+      <div class="form-field">
+        <div class="field-question">How much time will you spend each day learning?</div>
+        <p-floatlabel>
+          <p-datepicker
+            formControlName="timePerDay"
+            [timeOnly]="true"
+            placeholder=" ">
+          </p-datepicker>
+          <label for="timePerDay">Time per Day</label>
+        </p-floatlabel>
+      </div>
 
+      <!-- Max Lesson Length -->
+      <div class="form-field">
+        <div class="field-question">What is the maximum length for one lesson?</div>
+        <p-floatlabel>
+          <p-datepicker
+            formControlName="maxLengthLesson"
+            [timeOnly]="true"
+            placeholder=" ">
+          </p-datepicker>
+          <label for="maxLengthLesson">Max Lesson Length</label>
+        </p-floatlabel>
+      </div>
 
-<p-floatlabel variant="on">
-    <p-select inputId="on_label" [options]="languageOptions" formControlName="language"  optionLabel="name" styleClass="w-full" />
-    <label for="on_label">Language</label>
-</p-floatlabel>
+      <!-- Notifications -->
+      <div class="form-field">
+        <div class="field-question">Would you like to receive push notifications?</div>
+        <label class="field-label">Receive Notifications?</label>
+        <p-togglebutton
+          formControlName="activatedPush"
+          [onIcon]="'pi pi-check'"
+          [offIcon]="'pi pi-times'"
+          styleClass="w-full sm:w-40">
+        </p-togglebutton>
+      </div>
 
+      <!-- Notification Time -->
+      <div class="form-field" *ngIf="form.get('activatedPush')!.value">
+        <div class="field-question">At what time should we notify you each day?</div>
+        <p-floatlabel>
+          <p-datepicker
+            formControlName="notificationTime"
+            [timeOnly]="true"
+            placeholder=" ">
+          </p-datepicker>
+          <label for="notificationTime">Notification Time</label>
+        </p-floatlabel>
+      </div>
 
+    </ng-container>
+  } @else {
+    <p-progress-spinner ariaLabel="Loading..."></p-progress-spinner>
+  }
 
-
-<p-fileupload (onRemove)="onRemove($event)" [showCancelButton]="false" [showUploadButton]="false" (onSelect)="onUpload($event)"  [multiple]="true" accept="application/pdf" mode="advanced">
-    <ng-template #empty>
-        <div>Drag and drop files to here to upload.</div>
-    </ng-template>
-</p-fileupload>
-<p-toast></p-toast>
-
-
-
-<p-floatlabel variant="on">
-    <textarea pTextarea formControlName="instructionAi" rows="3" cols="30" style="resize: none" class="h-full"></textarea>
-    <label for="on_label">Add Prompt</label>
-</p-floatlabel>
-
-<p-floatlabel variant="on">
-    <p-datepicker  selectionMode="range" formControlName="date" [readonlyInput]="true"   autocomplete="off" />
-    <label for="on_label">Start Date-End Date</label>
-</p-floatlabel>
-
-<p-floatlabel variant="on">
-    <p-datepicker  formControlName="timePerDay" [timeOnly]="true"  autocomplete="off" />
-    <label for="on_label">Minutes and Hours per day</label>
-</p-floatlabel>
-
-<p-floatlabel variant="on">
-    <p-datepicker  formControlName="maxLengthLesson"  [timeOnly]="true"  autocomplete="off" />
-    <label for="on_label">Max Lenght for 1 lesson</label>
-</p-floatlabel>
-
-<p>Do you what notifications?</p>
- <p-togglebutton  formControlName="activatedPush"  [onIcon]="'pi pi-check'" [offIcon]="'pi pi-times'" class="ng-invalid ng-dirty" styleClass="w-full sm:w-40" aria-label="Confirmation" />
-
- <p-floatlabel variant="on">
-    <p-datepicker  formControlName="notificationTime"  [timeOnly]="true"  autocomplete="off" />
-    <label for="on_label">Time notficated</label>
-</p-floatlabel>
-
-
-</ng-container>
-
-
-} @else {
-<p-progress-spinner ariaLabel="loading" />
-}
-
-
-<p-button label="Submit" [disabled]="form.invalid || loading" type="Submit" />
-
-
+  <!-- Submit Button -->
+  <p-button
+    label="Submit"
+    [disabled]="form.invalid || loading"
+    type="submit"
+    class="submit-btn">
+  </p-button>
 
 </form>
-
-
-

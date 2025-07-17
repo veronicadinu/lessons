@@ -1,25 +1,68 @@
-<p-toolbar>
-    <ng-template #start>
-        <p-button [routerLink]="['/']" icon="pi pi-home" class="mr-2" text severity="secondary" />
-        <p-button icon="pi pi-print" class="mr-2" text severity="secondary" />
-        <p-button icon="pi pi-upload" text severity="secondary" />
-        <p-button [routerLink]="['/subjects']" icon="pi pi-plus" text severity="secondary" />
-        
-    </ng-template>
- 
-    <ng-template #end> 
-        @if (user){
-          <button (click)="logout()"> Logout </button>
+
+
+<p-drawer  [(visible)]="visible" [closable]="false">
+    <ng-template #header>
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+              <div style="display: flex; flex-direction: row; align-items: center;">
+                 <img src="assets/logo.png" alt="Your Logo" width="50" height="40" class="block mx-auto" />
+                 <span style="margin-left: 6px;">One Minute</span>
+              </div>
+                
+
+           
+
+     <div style="display: flex; flex-direction: column;align-items: start;">
+   
+        <p-button label="Home" [routerLink]="['/']" icon="pi pi-home" text severity="secondary" />
+        <p-button label="Subjects" [routerLink]="['/subjects']" icon="pi pi-folder" class="mr-2" text severity="secondary" />
+       
+         @if (user){
+          <button (click)="logout()" pButton label="Logout" icon="pi pi-sign-out" class="w-full" severity="danger" text></button>
         }  
 
         @if(!user){
-            <button (click)="login()"> Login </button>
+          <button (click)="login()" pButton label="Login" icon="pi pi-sign-in" class="w-full" severity="success" text></button>
+          
         }
-      <p-chip [label]="user?.name || 'User'" alt="Avatar image">
-        <img style="border-radius: 50%;" width="32" height="32" [src]="user?.picture ? user?.picture : '/assets/default-avatar.webp'" referrerpolicy="no-referrer" />
-      </p-chip>
 
+    </div>
+
+          
+        </div>
     </ng-template>
 
-</p-toolbar>
 
+   <ng-template #footer>
+
+      <p-chip [label]="user?.name || 'User'" alt="Avatar image">
+        <img style="border-radius: 50%;" width="32" height="32" [src]="user?.picture ? user?.picture : '/assets/default-avatar.webp'" referrerpolicy="no-referrer" />
+      </p-chip> 
+   
+  </ng-template>
+
+    
+</p-drawer>
+
+
+
+
+
+
+<p-toolbar>
+    <ng-template #start>
+      <p-button (click)="visible = true" icon="pi pi-bars" />
+    </ng-template>
+
+    <ng-template #end>
+
+            @if (user){
+          <button (click)="logout()" pButton label="Logout" icon="pi pi-sign-out" class="w-full" severity="danger" text></button>
+        }  
+
+        @if(!user){
+          <button (click)="login()" pButton label="Login" icon="pi pi-sign-in" class="w-full" severity="success" text></button>
+          
+        }
+ 
+    </ng-template>
+</p-toolbar>

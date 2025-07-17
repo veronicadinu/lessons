@@ -1,5 +1,73 @@
+<div class="homepage">
 
-    <p-button label="Get START" icon="pi pi-check"  [routerLink]="['/subjects']" />
+  <!-- Hero Section -->
+  <section class="hero">
+    <h1>Master Your Learning Journey</h1>
+    <p>Plan lessons, track progress, and test yourself — all in one place.</p>
+    <p-button 
+      [routerLink]="['/subjects']"
+      label="Try It Now"
+      class="cta-button p-button-rounded p-button-lg">
+    </p-button>
+  </section>
 
-    <p>{{respons}}</p>
+  <!-- How It Works -->
+  <section class="how-it-works">
+    <h2>How It Works</h2>
+    <div class="steps">
+      <p-card class="step">
+        <h3>📅 Schedule</h3>
+        <p>Choose what and when to learn with a flexible calendar.</p>
+      </p-card>
+      <p-card class="step">
+        <h3>🎯 Learn</h3>
+        <p>Follow your lesson plan and keep track of what you’ve done.</p>
+      </p-card>
+      <p-card class="step">
+        <h3>🧪 Test</h3>
+        <p>Test your knowledge when you complete each subject.</p>
+      </p-card>
+    </div>
+  </section>
 
+  <!-- Features Grid -->
+  <section class="features">
+    <h2>Features You'll Love</h2>
+    <div class="features-grid">
+      <p-card class="feature-card">
+        <h4>✅ Personalized Planning</h4>
+        <p>Create lesson plans that suit your goals and schedule.</p>
+      </p-card>
+      <p-card class="feature-card">
+        <h4>📊 Progress Tracking</h4>
+        <p>Visualize your learning with real-time stats.</p>
+      </p-card>
+      <p-card class="feature-card">
+        <h4>🔔 Smart Reminders</h4>
+        <p>Stay on track with daily notifications and nudges.</p>
+      </p-card>
+      <p-card class="feature-card">
+        <h4>🧠 Adaptive Testing</h4>
+        <p>Challenge yourself with tests designed around what you’ve learned.</p>
+      </p-card>
+    </div>
+  </section>
+
+  <!-- Call to Action -->
+  <section class="call-to-action">
+    <h2>Ready to start learning smarter?</h2>
+
+     <p-button 
+      [routerLink]="['/subjects']"
+      label="Get Start"
+      class="cta-button p-button-rounded p-button-lg">
+    </p-button>
+
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>© 2025 LessonPlanner App. All rights reserved.</p>
+  </footer>
+
+</div>

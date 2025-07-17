@@ -1,13 +1,34 @@
 import { Injectable } from '@angular/core';
+import { BehaviorSubject, Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class TextToSpeechService {
   private synth: SpeechSynthesis;
+  private voicesSubject = new BehaviorSubject<SpeechSynthesisVoice[]>([]);
 
   constructor() {
     this.synth = window.speechSynthesis;
+
+      // ✅ Load voices when available
+    if (this.synth.onvoiceschanged !== undefined) {
+      this.synth.onvoiceschanged = () => {
+        this.voicesSubject.next(this.synth.getVoices().filter(x => !x.localService));
+        console.log("✅ xxxVoices loaded:", this.voicesSubject.value);
+      };
+    }
+  }
+
+  voices() {
+    return this.voicesSubject.asObservable();
+  }
+
+  isLanguageSupported(lang: string) {
+    if (this.voicesSubject.value.length === 0) {
+      return false;
+    }
+    return this.voicesSubject.value.findIndex(x => x.lang.toLowerCase() === lang.toLowerCase()) > -1;
   }
 
   stop() {
@@ -22,7 +43,7 @@ export class TextToSpeechService {
     }
   }
 
-  speak(text: string): void {
+  speak(text: string, lang: string ="en-US"): void {
     if (!this.synth) {
       console.warn('SpeechSynthesis not supported in this browser.');
       return;
@@ -39,17 +60,34 @@ export class TextToSpeechService {
 
     const utterance = new SpeechSynthesisUtterance(text);
 
-    // Select US English voice if available
-    const voices = this.synth.getVoices();
-    const usVoice = voices.find(
-      (voice) =>
-        voice.lang === 'en-US' || voice.lang.startsWith('en-US')
-    );
-    if (usVoice) {
-      utterance.voice = usVoice;
+
+  // ✅ Use previously loaded voices
+    const voices = this.voicesSubject.value;
+
+    
+    // If voices not loaded yet, wait and retry
+    if (!voices.length) {
+      console.warn("🕐 Voices not ready yet. Retrying...");
+      setTimeout(() => this.speak(text, lang), 500);
+      return;
     }
 
-    this.synth.speak(utterance);
+    // Match available voice
+  const selectedVoice = voices.find(
+    (voice) =>  voice.lang.toLowerCase() === lang.toLowerCase()
+  );
+
+  if (selectedVoice) {
+    console.log('Found voice', selectedVoice)
+    utterance.voice = selectedVoice;
+    utterance.lang = selectedVoice.lang;
+  } else {
+    utterance.lang = lang; // fallback if voice not matched
+  }
+
+  this.synth.speak(utterance);
+
+
   }
 
 
