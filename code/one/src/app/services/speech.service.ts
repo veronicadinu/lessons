@@ -108,11 +108,7 @@ export class TextToSpeechService {
 
   // ✅ Add resume function
   resume(): void {
-    console.log(this.synth)
     
-    if (this.synth.paused) {
       this.synth.resume();
-      console.log(222)
-    }
   }
 }
