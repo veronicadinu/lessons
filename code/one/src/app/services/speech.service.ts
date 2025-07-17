@@ -102,7 +102,6 @@ export class TextToSpeechService {
   pause(): void {
     if (this.synth.speaking && !this.synth.paused) {
       this.synth.pause();
-      console.log(1111)
     }
   }
 
