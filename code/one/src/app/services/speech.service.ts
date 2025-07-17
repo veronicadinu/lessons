@@ -10,13 +10,21 @@ export class TextToSpeechService {
 
   constructor() {
     this.synth = window.speechSynthesis;
-    this.voicesSubject.next([...this.synth.getVoices().filter(x => !x.localService), ...this.synth.getVoices().filter(x => x.localService)]);
+    if (this.synth) {
+      this.voicesSubject.next([
+        ...this.synth.getVoices().filter((x) => !x.localService),
+        ...this.synth.getVoices().filter((x) => x.localService),
+      ]);
       // ✅ Load voices when available
-    if (this.synth.onvoiceschanged !== undefined) {
-      this.synth.onvoiceschanged = () => {
-        this.voicesSubject.next([...this.synth.getVoices().filter(x => !x.localService), ...this.synth.getVoices().filter(x => x.localService)]);
-        console.log("✅ xxxVoices loaded:", this.voicesSubject.value);
-      };
+      if (this.synth.onvoiceschanged !== undefined) {
+        this.synth.onvoiceschanged = () => {
+          this.voicesSubject.next([
+            ...this.synth.getVoices().filter((x) => !x.localService),
+            ...this.synth.getVoices().filter((x) => x.localService),
+          ]);
+          console.log('✅ xxxVoices loaded:', this.voicesSubject.value);
+        };
+      }
     }
   }
 
@@ -28,7 +36,11 @@ export class TextToSpeechService {
     if (this.voicesSubject.value.length === 0) {
       return false;
     }
-    return this.voicesSubject.value.findIndex(x => x.lang.toLowerCase() === lang.toLowerCase()) > -1;
+    return (
+      this.voicesSubject.value.findIndex(
+        (x) => x.lang.toLowerCase() === lang.toLowerCase()
+      ) > -1
+    );
   }
 
   stop() {
@@ -43,7 +55,7 @@ export class TextToSpeechService {
     }
   }
 
-  speak(text: string, lang: string ="en-US"): void {
+  speak(text: string, lang: string = 'en-US'): void {
     if (!this.synth) {
       console.warn('SpeechSynthesis not supported in this browser.');
       return;
@@ -60,56 +72,43 @@ export class TextToSpeechService {
 
     const utterance = new SpeechSynthesisUtterance(text);
 
-
-  // ✅ Use previously loaded voices
+    // ✅ Use previously loaded voices
     const voices = this.voicesSubject.value;
 
-    
     // If voices not loaded yet, wait and retry
     if (!voices.length) {
-      console.warn("🕐 Voices not ready yet. Retrying...");
+      console.warn('🕐 Voices not ready yet. Retrying...');
       setTimeout(() => this.speak(text, lang), 500);
       return;
     }
 
     // Match available voice
-  const selectedVoice = voices.find(
-    (voice) =>  voice.lang.toLowerCase() === lang.toLowerCase()
-  );
+    const selectedVoice = voices.find(
+      (voice) => voice.lang.toLowerCase() === lang.toLowerCase()
+    );
 
-  if (selectedVoice) {
-    console.log('Found voice', selectedVoice)
-    utterance.voice = selectedVoice;
-    utterance.lang = selectedVoice.lang;
-  } else {
-    utterance.lang = lang; // fallback if voice not matched
+    if (selectedVoice) {
+      console.log('Found voice', selectedVoice);
+      utterance.voice = selectedVoice;
+      utterance.lang = selectedVoice.lang;
+    } else {
+      utterance.lang = lang; // fallback if voice not matched
+    }
+
+    this.synth.speak(utterance);
   }
 
-  this.synth.speak(utterance);
-
-
-  }
-
-
-    // ✅ Add pause function
+  // ✅ Add pause function
   pause(): void {
     if (this.synth.speaking && !this.synth.paused) {
       this.synth.pause();
     }
   }
 
-
-  
   // ✅ Add resume function
   resume(): void {
     if (this.synth.paused) {
       this.synth.resume();
     }
   }
-
-
-
-
-
-
 }
