@@ -49,10 +49,10 @@ export class TextToSpeechService {
       return;
     }
 
-    if (this.synth.speaking) {
+    //if (this.synth.speaking) {
       // If already speaking, cancel the current utterance
       this.synth.cancel();
-    }
+   // }
   }
 
   speak(text: string, lang: string = 'en-US'): void {
@@ -102,13 +102,17 @@ export class TextToSpeechService {
   pause(): void {
     if (this.synth.speaking && !this.synth.paused) {
       this.synth.pause();
+      console.log(1111)
     }
   }
 
   // ✅ Add resume function
   resume(): void {
+    console.log(this.synth)
+    
     if (this.synth.paused) {
       this.synth.resume();
+      console.log(222)
     }
   }
 }
