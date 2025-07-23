@@ -24,6 +24,13 @@ import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 import cron from "node-cron";
+import { CreditResponse } from "./models/credit-response";
+// import Stripe from 'stripe';
+// const stripe = new Stripe(process.env.STRIPEPRIVATEKEY as string)
+
+
+
+
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -125,6 +132,114 @@ app.use(
     requestProperty: "userAuth", // The decoded JWT will be attached to req.userAuth
   }) as express.RequestHandler // Important to satisfy TypeScript
 );
+
+
+
+// app.post('/api/create/session', async (req: AuthenticatedRequest, res: Response)=>{
+//   const {credits} = req.body
+
+//   try{
+
+//     const session = await stripe.checkout.sessions.create({
+
+//       payment_method_types: ['card'],
+//       line_items: [
+//         {
+//           price_data: {
+//             currency: 'usd',
+//             product_data: {
+//               name: `${credits} AI Credits`,
+//             },
+//             unit_amount: credits * 100, // in cents
+//           },
+//           quantity: 1,
+//         },
+//       ],
+//       mode: 'payment',
+//       success_url: 'http://localhost:4200/success',
+//       cancel_url: 'http://localhost:4200/cancel',
+
+//     })
+
+//      res.json({ id: session.id });
+
+//   }catch(error){
+//      console.log("Error fetching credits:", error);
+//       res.status(500).send({ message: "Server error" });
+//   }
+// })
+
+
+app.get("/api/credits/free", async (req: AuthenticatedRequest, res: Response)=>{
+  try {
+      const userId = req.userAuth?.sub;
+
+      if (!userId) {
+        res.status(400).send({ message: "User ID not found in token" });
+        return;
+      }
+
+
+      const [userCredit]: any = await baza.execute("SELECT * FROM credits WHERE userId=?", [userId])
+
+      if(userCredit.length > 0){
+
+        res.status(200).send({message: 'Already exist your credit'})
+        return
+      
+        
+      }
+
+      await baza.execute("INSERT INTO credits (userId, credits) VALUES (?,?)", [userId, 50])
+      res.status(200).send({message: 'OK'})
+
+
+     
+
+    } catch (error) {
+      console.log("Error fetching subjects:", error);
+      res.status(500).send({ message: "Server error" });
+    }
+  
+  
+})
+
+
+app.get("/api/credits/amount", async (req: AuthenticatedRequest, res: Response)=>{
+  try {
+      const userId = req.userAuth?.sub;
+
+      if (!userId) {
+        res.status(400).send({ message: "User ID not found in token" });
+        return;
+      }
+
+
+      const [userCredit]: any = await baza.execute("SELECT * FROM credits WHERE userId=?", [userId])
+
+      if(userCredit.length === 0){
+
+        res.status(200).send({credit: 0} as CreditResponse)
+        return
+      
+        
+      }
+      
+      res.status(200).send({credit: userCredit[0].credits} as CreditResponse)
+
+
+     
+
+    } catch (error) {
+      console.log("Error fetching subjects:", error);
+      res.status(500).send({ message: "Server error" });
+    }
+  
+  
+})
+
+
+
 
 app.get(
   "/api/subjectsAll",
@@ -856,6 +971,10 @@ cron.schedule("0 * * * *", notifJob);
 (async () => {
   // await notifJob();
 })();
+
+
+
+
 
 const port = process.env.PORT;
 app.listen(port, () => {

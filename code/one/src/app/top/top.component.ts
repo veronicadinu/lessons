@@ -11,11 +11,18 @@ import { SpeedDialModule } from 'primeng/speeddial';
 import { MenuItem } from 'primeng/api';
 import { RouterModule } from '@angular/router';
 import { Drawer, DrawerModule } from 'primeng/drawer';
+import { CreditService } from '../services/credit.service';
+ import { DialogModule } from 'primeng/dialog';
+// import { loadStripe } from '@stripe/stripe-js';
+
+
+
 
 
 @Component({
   selector: 'app-top',
-  imports: [ToolbarModule, ButtonModule, AvatarModule, ChipModule, MenuModule, CommonModule, SpeedDialModule,RouterModule,DrawerModule],
+  imports: [ToolbarModule, ButtonModule, AvatarModule, ChipModule, MenuModule, CommonModule, SpeedDialModule, RouterModule, DrawerModule,
+    DialogModule],
   templateUrl: './top.component.html',
   styleUrl: './top.component.css'
 })
@@ -32,14 +39,29 @@ export class TopComponent implements OnInit {
   user: User | undefined
   items: MenuItem[] | undefined;
 
+    visibles: boolean = false;
 
-  constructor(public oidc: OidcSecurityService){}
+    showDialog() {
+        this.visibles = true;
+    }
+
+    selectedPlan = ''
+
+    //stripePromp = loadStripe('pk_test_51Ro0YE2NTKR366Vs35Dvcq32Iwlz2c2L8TzhH9hvewgVyPejxNx522BxqkVcxuUGUJDO8wxGZb4BY1QBt5qGAhjL00rljV5hs5 ')
+
+  constructor(public oidc: OidcSecurityService, public credits: CreditService){}
 
   ngOnInit(): void {
     //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
     //Add 'implements OnInit' to the class.
     this.oidc.userData$.subscribe(u =>{
       this.user = u.userData
+
+         if(this.user){
+            this.credits.getFreeCredit().subscribe({next: ()=>{
+            
+            }})
+          }
     })
   }
 
@@ -52,6 +74,14 @@ export class TopComponent implements OnInit {
     this.oidc.authorize()
   }
 
+
+
+
+
+
+buyCredits(amount: number) {
+  alert(`Bought ${amount} credits!`);
+}
 
 
 }

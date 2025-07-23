@@ -58,6 +58,7 @@ export class MySubjectsComponent implements OnInit {
         
         this.respons = r;
         console.log('Subjects:', this.respons);
+        
       },
       error: (err) => {
         console.error('Error fetching subjects:', err);

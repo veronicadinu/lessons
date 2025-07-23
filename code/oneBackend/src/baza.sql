@@ -81,3 +81,9 @@ CREATE TABLE IF NOT EXISTS `push`(
  PRIMARY KEY (`id`)
 
 );
+
+CREATE TABLE IF NOT EXISTS `credits`(
+`userId` varchar(250) not null,
+`credits` int not null
+
+);

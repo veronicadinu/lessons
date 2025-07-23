@@ -1,14 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { TopComponent } from "./top/top.component";
 import { BottomComponent } from "./bottom/bottom.component";
-
 import { LoginResponse, OidcSecurityService } from 'angular-auth-oidc-client';
 import { SwPush } from '@angular/service-worker';
-import { HttpClient } from '@angular/common/http';
-import { Subscription } from 'rxjs';
 import { User } from './models/user';
 import { PushService } from './services/push.service';
+import { filter } from 'rxjs';
+import { CreditService } from './services/credit.service';
 
 
 @Component({
@@ -25,7 +24,9 @@ export class AppComponent implements OnInit {
 
    user: User | undefined
 
-  constructor(private oidc: OidcSecurityService, private swPush: SwPush, public push: PushService){}
+   showFooter = false
+
+  constructor(private oidc: OidcSecurityService, private swPush: SwPush, public push: PushService, private router: Router){}
 
   ngOnInit(): void {
 
@@ -37,6 +38,8 @@ export class AppComponent implements OnInit {
       this.oidc.userData$.subscribe({
         next: (data)=>{
           this.user = data.userData
+
+       
 
           if(this.user && this.swPush.isEnabled){
 
@@ -64,7 +67,9 @@ export class AppComponent implements OnInit {
       })
 
 
-
+    this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe((event: NavigationEnd)=>{
+      this.showFooter = event.urlAfterRedirects === '/' || event.urlAfterRedirects === '/home'
+    })
     
     
     

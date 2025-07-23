@@ -1,9 +1,21 @@
-::ng-deep .p-button.p-button-text.p-button-secondary {
-  color: #6c757d;
-  transition: color 0.3s ease;
+
+.app-footer {
+  background-color: #f1f5f9;
+  padding: 1rem 1rem;
+  border-top: 1px solid #e5e7eb;
+  text-align: center;
+  font-size: 0.9rem;
+  color: #6b7280;
+ 
 }
 
-::ng-deep .p-button.p-button-text.p-button-secondary:hover {
-  color: #2ecc71;
-  background-color: transparent;
+.footer-links a {
+  margin: 0 0.75rem;
+  text-decoration: none;
+  color: #6366f1;
+  font-weight: 500;
+}
+
+.footer-links a:hover {
+  text-decoration: underline;
 }

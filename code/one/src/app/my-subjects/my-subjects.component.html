@@ -1,4 +1,6 @@
-<div class="subjects-wrapper">
+
+  @if(respons.length > 0 ){
+  <div class="subjects-wrapper">
 
   <!-- Header with title and Add button -->
   <div class="subjects-header">
@@ -36,4 +38,28 @@
   </div>
 
 </div>
+} @else{
+
+  
+
+  <div class="hero-container">
+  <div class="hero-content">
+    <h1>📘 Subjects</h1>
+    <p>Manage your subjects with ease and clarity.</p>
+
+
+      <p-button 
+      [routerLink]="['/addSubject']"
+      icon="pi pi-plus"
+      iconPos="right"
+      label="Add Subject"
+      class="cta-button p-button-rounded p-button-lg">
+    </p-button>
+  </div>
+</div>
+
+
+
+}
+
  

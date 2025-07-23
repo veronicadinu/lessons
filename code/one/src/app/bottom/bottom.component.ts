@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';;
+import { Component, OnInit } from '@angular/core';;
 import { ButtonModule } from 'primeng/button';
 
 
@@ -8,6 +8,17 @@ import { ButtonModule } from 'primeng/button';
   templateUrl: './bottom.component.html',
   styleUrl: './bottom.component.css'
 })
-export class BottomComponent {
+export class BottomComponent implements OnInit{
+
+  constructor(){
+    
+  }
+
+
+  ngOnInit(): void {
+    //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
+    //Add 'implements OnInit' to the class.
+    
+  }
 
 }

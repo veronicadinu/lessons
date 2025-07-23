@@ -122,3 +122,87 @@ section {
   color: #7f8c8d;
   border-top: 1px solid #ecf0f1;
 }
+/* AI Features Section */
+.ai-powered {
+  background: #eef2ff;
+  padding: 3rem 1rem;
+  border-radius: 1.5rem;
+  text-align: center;
+}
+
+.ai-powered h2 {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  color: #1e3a8a;
+}
+
+.ai-features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.5rem;
+  justify-items: center;
+}
+
+.ai-feature {
+  padding: 1.5rem;
+  background-color: #ffffff;
+  border-radius: 1rem;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.05);
+  text-align: left;
+  max-width: 320px;
+}
+
+.ai-feature h4 {
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+  color: #111827;
+}
+
+.ai-feature p {
+  color: #374151;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .ai-powered h2 {
+    font-size: 1.5rem;
+  }
+
+  .ai-features {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+
+.social-links {
+  margin: 4rem 0 2rem;
+  text-align: center;
+}
+
+.social-links h3 {
+  font-size: 1.2rem;
+  color: #374151;
+  margin-bottom: 1rem;
+}
+
+.social-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+::ng-deep .social-buttons .p-button {
+  background-color: #f1f5f9;
+  border: 1px solid #d1d5db;
+  color: #1f2937;
+  border-radius: 50px;
+  transition: all 0.3s ease;
+}
+
+::ng-deep .social-buttons .p-button:hover {
+  background-color: #e0e7ff;
+  color: #4338ca;
+}

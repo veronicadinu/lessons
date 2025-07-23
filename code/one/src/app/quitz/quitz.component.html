@@ -91,7 +91,7 @@
                     </ng-template>
 
                     <span class="text-surface-500 dark:text-surface-400 block mb-8 text-center">
-                      🎉 Congrats! Your score is: {{score}}/{{questios.length}} 🎉
+                      {{ score === questios.length ? "🎉 Well done! Your score is: " : "💪 Almost there! Your score is: " }}{{score}}/{{questios.length}}
                     </span>
 
                     <ng-template #footer>

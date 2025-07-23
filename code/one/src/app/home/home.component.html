@@ -30,6 +30,33 @@
     </div>
   </section>
 
+  <!-- AI Power Section -->
+<section class="ai-powered">
+  <h2>Smarter Learning, Powered by AI</h2>
+  <div class="ai-features">
+    <p-card class="ai-feature">
+      <h4>🧾 AI Lesson Builder</h4>
+      <p>Type a topic or upload material, and the app builds your study roadmap.</p>
+    </p-card>
+    <p-card class="ai-feature">
+      <h4>✍️ Customizable & Summarized</h4>
+      <p>Edit content or get summaries to focus on what matters most.</p>
+    </p-card>
+    <p-card class="ai-feature">
+      <h4>📢 Listen as You Learn</h4>
+      <p>Turn text into speech and learn on the go.</p>
+    </p-card>
+  </div>
+</section>
+
+<section class="demo">
+  <h2>See It In Action</h2>
+  <video controls poster="/assets/demo-thumbnail.jpg" width="100%">
+    <source src="/assets/demo.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+</section>
+
   <!-- Features Grid -->
   <section class="features">
     <h2>Features You'll Love</h2>
@@ -50,6 +77,22 @@
         <h4>🧠 Adaptive Testing</h4>
         <p>Challenge yourself with tests designed around what you’ve learned.</p>
       </p-card>
+      <p-card class="feature-card">
+      <h4>📄 Upload & Convert PDFs</h4>
+      <p>Upload PDFs and let the app turn them into structured lesson plans.</p>
+    </p-card>
+    <p-card class="feature-card">
+      <h4>🤖 AI-Powered Lessons</h4>
+      <p>Enter a subject and get a complete AI-generated study plan instantly.</p>
+    </p-card>
+    <p-card class="feature-card">
+      <h4>🗣️ Text-to-Speech</h4>
+      <p>Listen to your lessons read aloud—perfect for audio learners.</p>
+    </p-card>
+    <p-card class="feature-card">
+      <h4>✏️ Editable Content & Summaries</h4>
+      <p>Modify your lessons, create summaries, and make learning truly yours.</p>
+    </p-card>
     </div>
   </section>
 
@@ -59,15 +102,21 @@
 
      <p-button 
       [routerLink]="['/subjects']"
-      label="Get Start"
+      label="Get Started"
       class="cta-button p-button-rounded p-button-lg">
     </p-button>
 
   </section>
 
   <!-- Footer -->
-  <footer class="footer">
-    <p>© 2025 LessonPlanner App. All rights reserved.</p>
-  </footer>
+<section class="social-links">
+  <h3>Follow Us</h3>
+  <div class="social-buttons">
+    <p-button icon="pi pi-facebook" [text]="true" aria-label="Facebook"></p-button>
+    <p-button icon="pi pi-twitter" [text]="true" aria-label="Twitter"></p-button>
+    <p-button icon="pi pi-linkedin" [text]="true" aria-label="LinkedIn"></p-button>
+  </div>
+</section>
+
 
 </div>
