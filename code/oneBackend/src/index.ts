@@ -239,6 +239,51 @@ app.get("/api/credits/amount", async (req: AuthenticatedRequest, res: Response)=
 })
 
 
+app.put('/api/credits/updates', async (req: AuthenticatedRequest, res: Response)=>{
+
+  try{
+
+    const userId = req.userAuth?.sub;
+
+    const body = req.body 
+
+    if (!userId) {
+        res.status(400).send({ message: "User ID not found in token" });
+        return;
+      }
+
+    const [userCredits]: any = await baza.execute("SELECT * FROM credits WHERE userId=? ", [userId])
+
+     if (!userCredits || userCredits.length === 0) {
+      res.status(404).send({ message: "User credits not found" });
+      return;
+    }
+
+      const currentCredits = userCredits[0].credits
+      const additionalCredits = Number(body.credits)
+
+       if (isNaN(additionalCredits)) {
+      res.status(400).send({ message: "Invalid credits value" });
+      return;
+    }
+
+    const updateCredits = currentCredits + additionalCredits
+
+       // Update database
+      await baza.execute("UPDATE credits SET credits=? WHERE userId=?", [updateCredits, userId])
+
+      // Return the new total
+      res.status(200).send({credit: updateCredits})
+
+  }catch(error){
+    
+      console.log("Error update credits:", error);
+      res.status(500).send({ message: "Server error" });
+  }
+  
+})
+
+
 
 
 app.get(

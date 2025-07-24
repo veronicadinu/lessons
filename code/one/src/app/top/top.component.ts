@@ -17,8 +17,6 @@ import { CreditService } from '../services/credit.service';
 
 
 
-
-
 @Component({
   selector: 'app-top',
   imports: [ToolbarModule, ButtonModule, AvatarModule, ChipModule, MenuModule, CommonModule, SpeedDialModule, RouterModule, DrawerModule,
@@ -28,24 +26,16 @@ import { CreditService } from '../services/credit.service';
 })
 export class TopComponent implements OnInit {
 
-      @ViewChild('drawerRef') drawerRef!: Drawer;
+@ViewChild('drawerRef') drawerRef!: Drawer;
 
-    closeCallback(e: any ): void {
-        this.drawerRef.close(e);
-    }
+closeCallback(e: any ): void { this.drawerRef.close(e);}
 
-    visible: boolean = false;
 
-  user: User | undefined
-  items: MenuItem[] | undefined;
-
-    visibles: boolean = false;
-
-    showDialog() {
-        this.visibles = true;
-    }
-
-    selectedPlan = ''
+visible: boolean = false;
+user: User | undefined
+items: MenuItem[] | undefined;
+show: boolean = false;
+showDialog() { this.show = true;}
 
     //stripePromp = loadStripe('pk_test_51Ro0YE2NTKR366Vs35Dvcq32Iwlz2c2L8TzhH9hvewgVyPejxNx522BxqkVcxuUGUJDO8wxGZb4BY1QBt5qGAhjL00rljV5hs5 ')
 
@@ -79,8 +69,16 @@ export class TopComponent implements OnInit {
 
 
 
-buyCredits(amount: number) {
-  alert(`Bought ${amount} credits!`);
+buyCredits(credit: number) {
+  alert(`Bought ${credit} credits!`);
+
+  //edit here the credits 
+
+  this.credits.getUpdateCredits({credits: credit}).subscribe({
+    next: (res)=>{ console.log('Credits updated:', res.credit);},
+    error: (err)=>{ console.error('Error updating credits', err);}
+  })
+
 }
 
 

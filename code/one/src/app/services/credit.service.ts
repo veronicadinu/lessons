@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { CreditResponse } from '../models/creditResponse';
 
@@ -17,6 +17,11 @@ export class CreditService {
 
   getCredits(){
     return this.http.get<CreditResponse>('/api/credits/amount')
+  }
+
+
+  getUpdateCredits(body: {credits: number}){
+    return this.http.put<CreditResponse>('/api/credits/updates', body)
   }
 
 

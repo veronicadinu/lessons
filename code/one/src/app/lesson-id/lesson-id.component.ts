@@ -91,9 +91,21 @@ export class LessonIdComponent implements OnInit, OnDestroy {
     })
   }
 
+
+// clickSpeech() {
+//   console.log('🧪 Test button clicked');
+
+//   const text = 'This is a test of the speech synthesis system.';
+//   const lang = 'en-US';
+
+//   this.tss.speak(text, lang);
+// }
+
   clickSpeech(){
 
-    const text = this.htmltotext.extractTextFromHtml(this.lesson!.content).replaceAll("_", "")
+    const text = this.htmltotext.extractTextFromHtml(this.lesson!.content).replaceAll("_", "").replaceAll("\n", " ").substring(0, 5000)
+
+    console.log(text)
 
     this.tss.speak(text, this.langauges)
     console.log(text)
