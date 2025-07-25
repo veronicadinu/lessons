@@ -8,19 +8,16 @@ import { RouterModule } from '@angular/router';
 import { FullCalendarModule } from '@fullcalendar/angular';
 import { CalendarOptions, EventSourceInput } from '@fullcalendar/core'; 
 import dayGridPlugin from '@fullcalendar/daygrid';
-import { ListboxModule } from 'primeng/listbox';
-import { Quiz } from '../models/quiz';
-import { AccordionModule } from 'primeng/accordion';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { DialogModule } from 'primeng/dialog';
 import { PanelModule } from 'primeng/panel';
 
 
 
+
 @Component({
   selector: 'app-subject-id',
-  imports: [ButtonModule, CommonModule, RouterModule, FullCalendarModule, ListboxModule, AccordionModule, 
-    ProgressSpinnerModule, DialogModule, PanelModule],
+  imports: [ButtonModule, CommonModule, RouterModule, FullCalendarModule,ProgressSpinnerModule, DialogModule, PanelModule,],
   templateUrl: './subject-id.component.html',
   styleUrl: './subject-id.component.css'
 })
@@ -73,7 +70,6 @@ export class SubjectIdComponent implements OnInit {
 
   lessons : Lesson[]= []
 
-  quizzes: Quiz[] = []
 
   loading: boolean = false;
 
@@ -131,13 +127,6 @@ export class SubjectIdComponent implements OnInit {
 
       
 
-    this.serverSubject.getQuizzesbySubjectId(this.subjectId).subscribe({
-      next: (data)=>{
-        console.log(data)
-           this.quizzes = data
-      },
-      error: (error)=>{console.error('Error fetching quizzes data:', error);}
-    })
 
 
     

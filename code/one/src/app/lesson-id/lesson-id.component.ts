@@ -12,12 +12,13 @@ import { TextToSpeechService } from '../services/speech.service';
 import { HtmltotextService } from '../services/htmltotext.service';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { jsPDF } from "jspdf";
+import { SplitButtonModule } from 'primeng/splitbutton';
 
 
 
 @Component({
   selector: 'app-lesson-id',
-  imports: [ButtonModule, PanelModule,ToggleButtonModule,FormsModule,AccordionModule,EditorModule,ProgressSpinnerModule],
+  imports: [ButtonModule, PanelModule,ToggleButtonModule,FormsModule,AccordionModule,EditorModule,ProgressSpinnerModule,SplitButtonModule],
   templateUrl: './lesson-id.component.html',
   styleUrl: './lesson-id.component.css'
 })
@@ -26,6 +27,8 @@ export class LessonIdComponent implements OnInit, OnDestroy {
   lesson:Lesson | null = null
 
   idLesson!: number
+
+  langauges: string = ''
 
   isSpeeching = false;
 
@@ -45,7 +48,11 @@ export class LessonIdComponent implements OnInit, OnDestroy {
 
     this.subjectService.getLessonbyId(this.idLesson).subscribe({
       next: (data)=>{
-        this.lesson = data
+        this.lesson = data;
+
+        this.subjectService.getSubjetId(this.lesson.subjectId).subscribe({next: (s)=>{
+              this.langauges= s.language
+        }})
       },
       error: (error)=>{ console.error('Error fetching lessons data:', error); }
     }
@@ -53,7 +60,17 @@ export class LessonIdComponent implements OnInit, OnDestroy {
     
 
     )
+
+  
     
+  }
+
+
+  get isTtsEnabled() {
+    if (!this.langauges) {
+      return false;
+    }
+    return this.tss.isLanguageSupported(this.langauges);
   }
 
 
@@ -74,13 +91,26 @@ export class LessonIdComponent implements OnInit, OnDestroy {
     })
   }
 
+
+// clickSpeech() {
+//   console.log('🧪 Test button clicked');
+
+//   const text = 'This is a test of the speech synthesis system.';
+//   const lang = 'en-US';
+
+//   this.tss.speak(text, lang);
+// }
+
   clickSpeech(){
 
-    const text = this.htmltotext.extractTextFromHtml(this.lesson!.content).replaceAll("_", "")
+    const text = this.htmltotext.extractTextFromHtml(this.lesson!.content).replaceAll("_", "").replaceAll("\n", " ").substring(0, 5000)
 
-    this.tss.speak(text)
+    console.log(text)
+
+    this.tss.speak(text, this.langauges)
     console.log(text)
     this.isSpeeching = true
+    
   }
 
   clickPause(){
@@ -101,64 +131,60 @@ export class LessonIdComponent implements OnInit, OnDestroy {
   }
 
 
- async downloadLesson(){
-
+async downloadLesson() {
   if (!this.lesson || !this.lesson.content) return;
 
-  // Extract plain text from HTML content
+  // Extract plain text from HTML content, remove underscores
   const text = this.htmltotext.extractTextFromHtml(this.lesson.content).replaceAll("_", "");
 
   // Create a new jsPDF instance
   const doc = new jsPDF();
 
- // Define max width for text area on the PDF page (e.g., 180 for A4 width with margin)
   const pageWidth = doc.internal.pageSize.getWidth();
-  const margin = 10;
+  const pageHeight = doc.internal.pageSize.getHeight();
+  const margin = 15;
   const maxLineWidth = pageWidth - margin * 2;
 
-  // Split text into lines that fit max width
+  // Set font and size for better readability
+  const fontSize = 8;
+  doc.setFont("roboto");
+  doc.setFontSize(fontSize);
+
+  // Calculate line height (leading)
+  const lineHeight = fontSize * 0.5; // 1.5 line spacing
+
+  // Split text into lines that fit within maxLineWidth
   const lines = doc.splitTextToSize(text, maxLineWidth);
 
-  // Starting Y position on the page
   let y = margin;
+  let pageNumber = 1;
 
-  // Define line height (height between lines)
-  const lineHeight = 10;
-
-  // Loop through lines and add them to the PDF, adding new pages as needed
   for (let i = 0; i < lines.length; i++) {
-    if (y > doc.internal.pageSize.getHeight() - margin) {
+    // If the next line would exceed page height minus bottom margin, add a new page
+    if (y + lineHeight > pageHeight - margin) {
+      // Add page number at bottom center before adding new page
+      doc.setFontSize(10);
+      doc.text(`Page ${pageNumber}`, pageWidth / 2, pageHeight - 10, { align: 'center' });
+      pageNumber++;
+
       doc.addPage();
+      doc.setFontSize(fontSize);
       y = margin;
     }
+
+    // Draw justified text: jsPDF doesn't support full justification, but
+    // we can do left align which looks neat.
     doc.text(lines[i], margin, y);
     y += lineHeight;
   }
 
-    // Convert PDF to Blob and wrap it as a File
-  const pdfBlob = doc.output('blob');
-  const file = new File([pdfBlob], "lesson.pdf", { type: "application/pdf" });
+  // Add page number on the last page
+  doc.setFontSize(10);
+  doc.text(`Page ${pageNumber}`, pageWidth / 2, pageHeight - 10, { align: 'center' });
 
-  
-  // Check if Web Share API with file support is available
-  if (navigator.canShare && navigator.canShare({ files: [file] })) {
-    try {
-      await navigator.share({
-        title: 'Lesson PDF',
-        text: 'Check out this lesson.',
-        files: [file]
-      });
-    } catch (err) {
-      console.error("Sharing failed:", err);
-    }
-  } else {
-    alert("Sharing is not supported on this browser. Please download the PDF instead.");
-  }
+  // Save the PDF
+  doc.save("lesson.pdf");
+}
 
-
-    
-
-  }
-  
 
 }

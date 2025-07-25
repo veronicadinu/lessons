@@ -1,36 +1,65 @@
 
-   <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; width: 100%;">
+  @if(respons.length > 0 ){
+  <div class="subjects-wrapper">
 
-   <h3>Subjects</h3>
+  <!-- Header with title and Add button -->
+  <div class="subjects-header">
+    <h3>Subjects</h3>
+    <p-button label="Add" icon="pi pi-plus" iconPos="right" [routerLink]="['/addSubject']"></p-button>
+  </div>
 
-   <p-card [style]="{ width: '100%', overflow: 'hidden', marginBottom:'20px' }">
-
-@for(r of respons; track r.id; let i=$index){
-
-
-<div  style="display: flex; flex-direction: row; align-items: center; justify-content: space-around;">
-    <a [routerLink]="['/subject/', r.id]" style="width: 80%; padding: 10px;" >
-     <p-listbox [options]="[r]"  optionLabel="nameSubject" class="w-full md:w-56" />
-    </a>
-   
-    <div >
-    <p-button (click)="deleteSubject(r.id)" icon="pi pi-times" severity="danger" />
-    </div>
-  
+ <div class="search-bar-wrapper">
+  <div class="search-bar-inside">
+    <input
+      type="text"
+      pInputText
+      [(ngModel)]="search"
+      placeholder="Search subjects..."
+      autocomplete="off"
+    />
+    <i class="pi pi-search"></i>
+  </div>
 </div>
+
+
+
+  <!-- Responsive subject grid -->
+  <div class="subjects-grid">
+    @for(r of filteredSubjects; track r.id; let i=$index){
+      <div class="subject-card">
+        <div class="subject-info">
+          <a [routerLink]="['/subject/', r.id]" class="subject-link">
+            {{ r.nameSubject }}
+          </a>
+          <p-button icon="pi pi-times" [text]="true" severity="danger" (click)="deleteSubject(r.id)"></p-button>
+        </div>
+      </div>
+    }
+  </div>
+
+</div>
+} @else{
+
+  
+
+  <div class="hero-container">
+  <div class="hero-content">
+    <h1>📘 Subjects</h1>
+    <p>Manage your subjects with ease and clarity.</p>
+
+
+      <p-button 
+      [routerLink]="['/addSubject']"
+      icon="pi pi-plus"
+      iconPos="right"
+      label="Add Subject"
+      class="cta-button p-button-rounded p-button-lg">
+    </p-button>
+  </div>
+</div>
+
+
+
 }
 
-    
-</p-card>
-
-      
-
-    <div>
-       <p-button label="Add" icon="pi pi-plus" iconPos="right"  [routerLink]="['/addSubject']"/>
-    </div>
-
-
-
-   </div>
-
-    
+ 

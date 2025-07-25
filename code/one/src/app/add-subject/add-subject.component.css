@@ -1,0 +1,91 @@
+.form-wrapper {
+  max-width: 700px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-title {
+  text-align: center;
+  font-size: 1.75rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.form-field {
+  width: 100%;
+  position: relative;
+}
+
+.field-label {
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+/* Outlined look */
+::ng-deep .p-inputtext,
+::ng-deep .p-inputtextarea,
+::ng-deep .p-dropdown,
+::ng-deep .p-calendar,
+::ng-deep .p-multiselect,
+::ng-deep .p-inputwrapper {
+  border: 1px solid #ccc !important;
+  border-radius: 8px;
+  padding: 0.5rem 0.75rem;
+  font-size: 1rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Textarea as single-line input */
+::ng-deep .p-inputtextarea {
+  resize: none;
+  min-height: 2.5rem !important;
+  padding-top: 0.6rem !important;
+}
+
+/* Floating label behavior */
+::ng-deep .p-float-label > label {
+  left: 0.75rem;
+  top: 0.75rem;
+  transition: all 0.2s ease;
+  color: #777;
+  background: white;
+  padding: 0 0.25rem;
+  pointer-events: none;
+}
+
+::ng-deep .p-float-label > .p-inputtext:focus + label,
+::ng-deep .p-float-label > .p-inputtext:not(:placeholder-shown) + label,
+::ng-deep .p-float-label > textarea:focus + label,
+::ng-deep .p-float-label > textarea:not(:placeholder-shown) + label {
+  top: -0.6rem;
+  left: 0.6rem;
+  font-size: 0.75rem;
+  color: #333;
+}
+
+/* Submit Button */
+.submit-btn {
+  width: 100%;
+  max-width: 200px;
+  align-self: center;
+}
+
+.field-question {
+  font-weight: 600;
+  margin-bottom: 20px; /* enough space below the question */
+  color: #444;
+  font-size: 1rem;
+  display: block;
+}
+
+.form-field > p-floatlabel {
+  margin-top: 0.6rem; /* space between question and input */
+}

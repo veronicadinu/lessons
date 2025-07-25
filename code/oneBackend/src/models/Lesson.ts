@@ -6,5 +6,5 @@ export interface Lesson {
     date: string,
     content: string | null,
     summary: string | null,
-    done: boolean
+    done: boolean,
 }

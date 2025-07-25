@@ -32,6 +32,7 @@
     "node-cron": "^4.1.1",
     "pdf-extract-image": "^0.0.3",
     "pdf-ts": "^0.0.2",
+    "stripe": "^18.3.0",
     "web-push": "^3.6.7"
   }
 }

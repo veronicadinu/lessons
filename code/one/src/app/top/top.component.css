@@ -1,0 +1,260 @@
+.cp{
+    cursor: pointer;
+}
+
+
+
+/* Dialog content styling */
+.subscription-dialog .p-dialog-content {
+  padding: 0 !important;
+  background: linear-gradient(to bottom right, #f0fdf4, #f9fafb);
+  border-radius: 0.75rem;
+  height: 100%;  /* make content fill dialog height */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Wrapper for logout state: center content vertically and horizontally */
+.subscription-wrapper.logged-out {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;  /* vertical centering */
+  align-items: center;      /* horizontal centering */
+  height: 100%;
+  padding: 2rem;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+/* Wrapper to constrain width of free gift card + banner --------------------- */
+.welcome-logout-wrapper {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-width: 400px;
+  width: calc(100% - 2rem); /* Adds horizontal padding */
+  padding: 1rem; /* Adds inner spacing for mobile */
+  width: 100%;
+  z-index: 1000; /* Make sure it's above other elements */
+  max-height: 90vh; /* Prevents overflow on short screens */
+}
+/* Banner below the header text */
+.not-logged-in-banner {
+  background: #eef2ff;
+  color: #4f46e5;
+  text-align: center;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 2rem;  /* slightly bigger margin */
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+
+/* Free gift card styling - center in wrapper */
+.welcome-logout-wrapper .subscription-card {
+  margin: 0 auto; /* horizontally center */
+  cursor: pointer;
+  background-color: #eef2ff;
+  border-color: #6366f1;
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.welcome-logout-wrapper .subscription-card:hover {
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+  transform: translateY(-6px);
+}
+
+.welcome-logout-wrapper .subscription-card .icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  color: #6366f1;
+}
+
+.welcome-logout-wrapper .subscription-card h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.welcome-logout-wrapper .subscription-card .subtitle {
+  color: #6b7280;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.welcome-logout-wrapper .subscription-card .price {
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: #4f46e5;
+  margin: 1rem 0 1.5rem;
+}
+
+.welcome-logout-wrapper .subscription-card ul {
+  list-style: none;
+  padding-left: 1rem;
+  margin: 0 0 1.5rem 0;
+  color: #374151;
+  font-size: 0.95rem;
+  width: 100%;
+  text-align: left;
+}
+
+.welcome-logout-wrapper .subscription-card ul li {
+  margin-bottom: 0.5rem;
+  position: relative;
+  padding-left: 1.2rem;
+}
+
+.welcome-logout-wrapper .subscription-card ul li::before {
+  content: '✓';
+  color: #6366f1;
+  position: absolute;
+  left: 0;
+  font-weight: bold;
+}
+
+/* Buttons inside cards */
+.p-button-success,
+.buy-btn {
+  font-weight: bold;
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  margin-top: 1rem;
+}
+
+/* Pulse animation for buy buttons */
+.pulse {
+  animation: pulse 2s infinite;
+  border: 2px solid #10b981;
+  color: #10b981;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.6);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+  }
+}
+
+/* Grid for logged-in user */
+.subscription-grid.cards-3 {
+  display: grid;
+  gap: 2rem;
+  grid-template-columns: 1fr; /* mobile stacked */
+  flex-grow: 1;
+}
+
+/* Tablet and desktop grids for cards */
+@media (min-width: 640px) {
+  .subscription-grid.cards-3 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .subscription-grid.cards-3 {
+    grid-template-columns: repeat(3, 1fr);
+    justify-content: center;
+  }
+}
+
+/* Common card styling for all purchase cards */
+.subscription-card {
+  background-color: #ffffff;
+  border: 2px solid #e5e7eb;
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.subscription-card:hover {
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+  transform: translateY(-6px);
+}
+
+.subscription-card .icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  color: #10b981;
+}
+
+.subscription-card h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.subscription-card .subtitle {
+  color: #6b7280;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.subscription-card .price {
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: #10b981;
+  margin: 1rem 0 1.5rem;
+}
+
+.subscription-card ul {
+  list-style: none;
+  padding-left: 1rem;
+  margin: 0 0 1.5rem 0;
+  color: #374151;
+  font-size: 0.95rem;
+  width: 100%;
+  text-align: left;
+}
+
+.subscription-card ul li {
+  margin-bottom: 0.5rem;
+  position: relative;
+  padding-left: 1.2rem;
+}
+
+.subscription-card ul li::before {
+  content: '✓';
+  color: #10b981;
+  position: absolute;
+  left: 0;
+  font-weight: bold;
+}
+
+/* Color Themes */
+.small-pack {
+  border-color: #a3e635;
+  background-color: #f7fee7;
+}
+
+.medium-pack {
+  border-color: #22c55e;
+  background-color: #dcfce7;
+}
+
+.large-pack {
+  border-color: #15803d;
+  background-color: #bbf7d0;
+}
+
+

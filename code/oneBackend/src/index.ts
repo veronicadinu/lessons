@@ -24,6 +24,15 @@ import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 import cron from "node-cron";
+import { CreditResponse } from "./models/credit-response";
+// import Stripe from 'stripe';
+// const stripe = new Stripe(process.env.STRIPEPRIVATEKEY as string)
+
+
+const CREDITS_PER_SUBJECT = 50;
+
+
+
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -126,6 +135,159 @@ app.use(
   }) as express.RequestHandler // Important to satisfy TypeScript
 );
 
+
+
+// app.post('/api/create/session', async (req: AuthenticatedRequest, res: Response)=>{
+//   const {credits} = req.body
+
+//   try{
+
+//     const session = await stripe.checkout.sessions.create({
+
+//       payment_method_types: ['card'],
+//       line_items: [
+//         {
+//           price_data: {
+//             currency: 'usd',
+//             product_data: {
+//               name: `${credits} AI Credits`,
+//             },
+//             unit_amount: credits * 100, // in cents
+//           },
+//           quantity: 1,
+//         },
+//       ],
+//       mode: 'payment',
+//       success_url: 'http://localhost:4200/success',
+//       cancel_url: 'http://localhost:4200/cancel',
+
+//     })
+
+//      res.json({ id: session.id });
+
+//   }catch(error){
+//      console.log("Error fetching credits:", error);
+//       res.status(500).send({ message: "Server error" });
+//   }
+// })
+
+
+app.get("/api/credits/free", async (req: AuthenticatedRequest, res: Response)=>{
+  try {
+      const userId = req.userAuth?.sub;
+
+      if (!userId) {
+        res.status(400).send({ message: "User ID not found in token" });
+        return;
+      }
+
+
+      const [userCredit]: any = await baza.execute("SELECT * FROM credits WHERE userId=?", [userId])
+
+      if(userCredit.length > 0){
+
+        res.status(200).send({message: 'Already exist your credit'})
+        return
+      
+        
+      }
+
+      await baza.execute("INSERT INTO credits (userId, credits) VALUES (?,?)", [userId, 50])
+      res.status(200).send({message: 'OK'})
+
+
+     
+
+    } catch (error) {
+      console.log("Error fetching subjects:", error);
+      res.status(500).send({ message: "Server error" });
+    }
+  
+  
+})
+
+
+app.get("/api/credits/amount", async (req: AuthenticatedRequest, res: Response)=>{
+  try {
+      const userId = req.userAuth?.sub;
+
+      if (!userId) {
+        res.status(400).send({ message: "User ID not found in token" });
+        return;
+      }
+
+
+      const [userCredit]: any = await baza.execute("SELECT * FROM credits WHERE userId=?", [userId])
+
+      if(userCredit.length === 0){
+
+        res.status(200).send({credit: 0} as CreditResponse)
+        return
+      
+        
+      }
+      
+      res.status(200).send({credit: userCredit[0].credits} as CreditResponse)
+
+
+     
+
+    } catch (error) {
+      console.log("Error fetching subjects:", error);
+      res.status(500).send({ message: "Server error" });
+    }
+  
+  
+})
+
+
+app.put('/api/credits/updates', async (req: AuthenticatedRequest, res: Response)=>{
+
+  try{
+
+    const userId = req.userAuth?.sub;
+
+    const body = req.body 
+
+    if (!userId) {
+        res.status(400).send({ message: "User ID not found in token" });
+        return;
+      }
+
+    const [userCredits]: any = await baza.execute("SELECT * FROM credits WHERE userId=? ", [userId])
+
+     if (!userCredits || userCredits.length === 0) {
+      res.status(404).send({ message: "User credits not found" });
+      return;
+    }
+
+      const currentCredits = userCredits[0].credits
+      const additionalCredits = Number(body.credits)
+
+       if (isNaN(additionalCredits)) {
+      res.status(400).send({ message: "Invalid credits value" });
+      return;
+    }
+
+    const updateCredits = currentCredits + additionalCredits
+
+       // Update database
+      await baza.execute("UPDATE credits SET credits=? WHERE userId=?", [updateCredits, userId])
+
+      // Return the new total
+      res.status(200).send({credit: updateCredits})
+
+  }catch(error){
+    
+      console.log("Error update credits:", error);
+      res.status(500).send({ message: "Server error" });
+  }
+  
+})
+
+
+
+
 app.get(
   "/api/subjectsAll",
   async (req: AuthenticatedRequest, res: Response): Promise<void> => {
@@ -179,6 +341,65 @@ app.post(
         return;
       }
 
+
+
+    // Check if user has enough credits
+      const [userCredits]: any = await baza.execute("SELECT * FROM credits WHERE userId=?", [userId]);
+      const currentCredits = userCredits.length > 0 ? userCredits[0].credits : 0; 
+
+      if (currentCredits < CREDITS_PER_SUBJECT) {
+        res.status(400).send({ message: "Not enough credits to add a subject" });
+        return;
+      }
+
+
+
+      const listaFiles: string[] = [];
+
+      const listaPhoto: string[] = []; ///base64 lista photo
+
+      let nrCuvinte = 0;
+
+      if (files && files.length > 0) {
+        for (let f of files) {
+          const stream = frombase64tostream(f);
+
+          const buffer = base64ToUint8Array(f);
+
+          const images = await extractImagesFromPdf(buffer as any);
+
+          const imagesbase64 = images.map((i) => {
+            return i.toString("base64");
+          });
+
+          const text = await getTextFromStream(stream);
+          nrCuvinte = nrCuvinte + text.split(" ").length;
+
+          listaFiles.push(text);
+          listaPhoto.push(...imagesbase64);
+        }
+      }
+
+      nrCuvinte = nrCuvinte + (instructionAi ? instructionAi.split(" ").length : 0);
+      let nrPoze = listaPhoto.length;
+
+      // Validation
+      if (nrCuvinte > 10000) {
+        res.status(400).send({
+          message: "The total number of words in the files exceeds 10,000",
+        });
+        return;
+      }
+
+      if (nrPoze > 10) {
+        res.status(400).send({
+          message: "The total number of photos exceeds 10",
+        });
+        return;
+      }
+
+
+
       const rezultatsubjectId = await baza.execute(
         "INSERT INTO subjects (nameSubject, language, instructionAi, startDate, endDate , timePerDay,  maxLengthLesson, userId, activatedPush, notificationTime, timeZone) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
         [
@@ -198,40 +419,21 @@ app.post(
 
       const subjectId = (rezultatsubjectId[0] as any).insertId;
 
-      const listaFiles: string[] = [];
 
-      const listaPhoto: string[] = []; ///base64 lista photo
-
-      if (files && files.length > 0) {
-        for (let f of files) {
-          const stream = frombase64tostream(f);
-
-          const buffer = base64ToUint8Array(f);
-
-          const images = await extractImagesFromPdf(buffer as any);
-
-          const imagesbase64 = images.map((i) => {
-            return i.toString("base64");
-          });
-
-          const text = await getTextFromStream(stream);
-
-          listaFiles.push(text);
-          listaPhoto.push(...imagesbase64);
-
-          const [resultfileId]: any = await baza.execute(
+        for (let f of listaFiles) {
+          
+          await baza.execute(
             "INSERT INTO files(subjectId, content) VALUES (?,?)",
-            [subjectId, text]
+            [subjectId, f]
           );
+        }
 
-          for (let p of imagesbase64) {
+          for (let p of listaPhoto) {
             await baza.execute(
-              "INSERT INTO photos(fileId, content, type) VALUES (?,?,?)",
-              [resultfileId.insertId, p, ".jpg"]
+              "INSERT INTO photos(subjectId, content, type) VALUES (?,?,?)",
+              [subjectId, p, ".jpg"]
             );
           }
-        }
-      }
 
       //Gemini
 
@@ -296,8 +498,11 @@ app.post(
       }
 
       const response = await ai.models.generateContent({
-        model: "gemini-2.0-flash",
+        model: "gemini-2.5-flash",
         contents: contents,
+        config: {
+          maxOutputTokens: 3000
+        }
       });
 
       const responseBetter = response
@@ -314,6 +519,10 @@ app.post(
           [subjectId, lesson.title, lesson.duration, lesson.date, null, false]
         );
       }
+
+      // Deduct credits
+      await baza.execute(
+        "UPDATE credits SET credits = ? WHERE userId = ?", [currentCredits - CREDITS_PER_SUBJECT, userId]);
 
       res
         .status(201)
@@ -406,13 +615,12 @@ app.get("/api/lesson/:id", async (req: AuthenticatedRequest, res: Response) => {
 
       const allphotosFiles: Photo[] = [];
 
-      for (let f of file) {
         const [rowsPhoto]: any = await baza.execute(
-          `SELECT * FROM photos WHERE fileId=?`,
-          [f.id]
+          `SELECT * FROM photos WHERE subjectId=?`,
+          [lesson.subjectId]
         );
         allphotosFiles.push(...rowsPhoto);
-      }
+
 
       const contents1: any = [
         {
@@ -461,8 +669,11 @@ app.get("/api/lesson/:id", async (req: AuthenticatedRequest, res: Response) => {
       }
 
       const resposeAI = ai.models.generateContent({
-        model: "gemini-2.0-flash",
+        model: "gemini-2.5-flash",
         contents: contents1,
+        config: {
+          maxOutputTokens: 10000
+        }
       });
 
       const contents2: any = [
@@ -509,8 +720,11 @@ app.get("/api/lesson/:id", async (req: AuthenticatedRequest, res: Response) => {
       }
 
       const resposeAiSummery = ai.models.generateContent({
-        model: "gemini-2.0-flash",
+        model: "gemini-2.5-flash",
         contents: contents2,
+        config: {
+          maxOutputTokens: 3000
+        }
       });
 
       const [summaryResponse, contentResponse] = await Promise.all([
@@ -633,7 +847,7 @@ app.post(
       const listaContent: string[] = lessons.map((l: Lesson) => l.content);
 
       const resposeAi = await ai.models.generateContent({
-        model: "gemini-2.0-flash",
+        model: "gemini-2.5-flash",
         contents: `
           Based on the following lessons content: 
           ${listaContent.join("\n\n\n\n\n")}.
@@ -856,6 +1070,10 @@ cron.schedule("0 * * * *", notifJob);
 (async () => {
   // await notifJob();
 })();
+
+
+
+
 
 const port = process.env.PORT;
 app.listen(port, () => {

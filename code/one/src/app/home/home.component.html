@@ -1,5 +1,122 @@
+<div class="homepage">
 
-    <p-button label="Get START" icon="pi pi-check"  [routerLink]="['/subjects']" />
+  <!-- Hero Section -->
+  <section class="hero">
+    <h1>Master Your Learning Journey</h1>
+    <p>Plan lessons, track progress, and test yourself — all in one place.</p>
+    <p-button 
+      [routerLink]="['/subjects']"
+      label="Try It Now"
+      class="cta-button p-button-rounded p-button-lg">
+    </p-button>
+  </section>
 
-    <p>{{respons}}</p>
+  <!-- How It Works -->
+  <section class="how-it-works">
+    <h2>How It Works</h2>
+    <div class="steps">
+      <p-card class="step">
+        <h3>📅 Schedule</h3>
+        <p>Choose what and when to learn with a flexible calendar.</p>
+      </p-card>
+      <p-card class="step">
+        <h3>🎯 Learn</h3>
+        <p>Follow your lesson plan and keep track of what you’ve done.</p>
+      </p-card>
+      <p-card class="step">
+        <h3>🧪 Test</h3>
+        <p>Test your knowledge when you complete each subject.</p>
+      </p-card>
+    </div>
+  </section>
 
+  <!-- AI Power Section -->
+<section class="ai-powered">
+  <h2>Smarter Learning, Powered by AI</h2>
+  <div class="ai-features">
+    <p-card class="ai-feature">
+      <h4>🧾 AI Lesson Builder</h4>
+      <p>Type a topic or upload material, and the app builds your study roadmap.</p>
+    </p-card>
+    <p-card class="ai-feature">
+      <h4>✍️ Customizable & Summarized</h4>
+      <p>Edit content or get summaries to focus on what matters most.</p>
+    </p-card>
+    <p-card class="ai-feature">
+      <h4>📢 Listen as You Learn</h4>
+      <p>Turn text into speech and learn on the go.</p>
+    </p-card>
+  </div>
+</section>
+
+<section class="demo">
+  <h2>See It In Action</h2>
+  <video controls poster="/assets/demo-thumbnail.jpg" width="100%">
+    <source src="/assets/demo.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+</section>
+
+  <!-- Features Grid -->
+  <section class="features">
+    <h2>Features You'll Love</h2>
+    <div class="features-grid">
+      <p-card class="feature-card">
+        <h4>✅ Personalized Planning</h4>
+        <p>Create lesson plans that suit your goals and schedule.</p>
+      </p-card>
+      <p-card class="feature-card">
+        <h4>📊 Progress Tracking</h4>
+        <p>Visualize your learning with real-time stats.</p>
+      </p-card>
+      <p-card class="feature-card">
+        <h4>🔔 Smart Reminders</h4>
+        <p>Stay on track with daily notifications and nudges.</p>
+      </p-card>
+      <p-card class="feature-card">
+        <h4>🧠 Adaptive Testing</h4>
+        <p>Challenge yourself with tests designed around what you’ve learned.</p>
+      </p-card>
+      <p-card class="feature-card">
+      <h4>📄 Upload & Convert PDFs</h4>
+      <p>Upload PDFs and let the app turn them into structured lesson plans.</p>
+    </p-card>
+    <p-card class="feature-card">
+      <h4>🤖 AI-Powered Lessons</h4>
+      <p>Enter a subject and get a complete AI-generated study plan instantly.</p>
+    </p-card>
+    <p-card class="feature-card">
+      <h4>🗣️ Text-to-Speech</h4>
+      <p>Listen to your lessons read aloud—perfect for audio learners.</p>
+    </p-card>
+    <p-card class="feature-card">
+      <h4>✏️ Editable Content & Summaries</h4>
+      <p>Modify your lessons, create summaries, and make learning truly yours.</p>
+    </p-card>
+    </div>
+  </section>
+
+  <!-- Call to Action -->
+  <section class="call-to-action">
+    <h2>Ready to start learning smarter?</h2>
+
+     <p-button 
+      [routerLink]="['/subjects']"
+      label="Get Started"
+      class="cta-button p-button-rounded p-button-lg">
+    </p-button>
+
+  </section>
+
+  <!-- Footer -->
+<section class="social-links">
+  <h3>Follow Us</h3>
+  <div class="social-buttons">
+    <p-button icon="pi pi-facebook" [text]="true" aria-label="Facebook"></p-button>
+    <p-button icon="pi pi-twitter" [text]="true" aria-label="Twitter"></p-button>
+    <p-button icon="pi pi-linkedin" [text]="true" aria-label="LinkedIn"></p-button>
+  </div>
+</section>
+
+
+</div>

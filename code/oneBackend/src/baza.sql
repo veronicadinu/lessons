@@ -66,11 +66,11 @@ FOREIGN KEY (`quizId`) references `quiz`(`id`) on delete cascade on update casca
 
 CREATE TABLE IF NOT EXISTS `photos`(
 `id` int not null auto_increment,
-`fileId` int not null,
+`subjectId` int not null,
 `content` longtext,
 `type` varchar(250),
 PRIMARY KEY (`id`),
-FOREIGN KEY (`fileId`) references `subjects`(`id`) on delete cascade on update cascade
+FOREIGN KEY (`subjectId`) references `subjects`(`id`) on delete cascade on update cascade
 
 );
 
@@ -79,5 +79,11 @@ CREATE TABLE IF NOT EXISTS `push`(
 `userId` varchar(250) not null,
 `json` longtext,
  PRIMARY KEY (`id`)
+
+);
+
+CREATE TABLE IF NOT EXISTS `credits`(
+`userId` varchar(250) not null,
+`credits` int not null
 
 );

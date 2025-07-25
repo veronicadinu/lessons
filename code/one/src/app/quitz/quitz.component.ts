@@ -15,9 +15,10 @@ import { ListboxModule } from 'primeng/listbox';
 import { DialogModule } from 'primeng/dialog';
 import { Subject } from 'rxjs';
 
+
 @Component({
   selector: 'app-quitz',
-  imports: [DatePipe,StepperModule,ButtonModule,ListboxModule,FormsModule,DialogModule,RouterModule],
+  imports: [DatePipe, StepperModule, ButtonModule, ListboxModule, FormsModule, DialogModule, RouterModule,],
   templateUrl: './quitz.component.html',
   styleUrl: './quitz.component.css'
 })

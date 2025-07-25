@@ -6,5 +6,6 @@ export interface Lesson {
     content: string,
     summary: string,
     done: boolean,
-    subjectId: number
+    subjectId: number,
+    language?: string //subject.lamguages
 } 

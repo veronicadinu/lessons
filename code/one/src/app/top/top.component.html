@@ -1,25 +1,164 @@
-<p-toolbar>
-    <ng-template #start>
-        <p-button [routerLink]="['/']" icon="pi pi-home" class="mr-2" text severity="secondary" />
-        <p-button icon="pi pi-print" class="mr-2" text severity="secondary" />
-        <p-button icon="pi pi-upload" text severity="secondary" />
-        <p-button [routerLink]="['/subjects']" icon="pi pi-plus" text severity="secondary" />
-        
-    </ng-template>
- 
-    <ng-template #end> 
-        @if (user){
-          <button (click)="logout()"> Logout </button>
+
+
+<p-drawer  [(visible)]="visible" [closable]="false">
+    <ng-template #header>
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+              <div style="display: flex; flex-direction: row; align-items: center;">
+                 <img src="assets/logo.png" alt="Your Logo" width="50" height="40" class="block mx-auto" />
+                 <span style="margin-left: 6px;">One Minute</span>
+              </div>
+                
+
+           
+
+     <div style="display: flex; flex-direction: column;align-items: start;">
+   
+        <p-button label="Home" [routerLink]="['/']" icon="pi pi-home" text severity="secondary" />
+        <p-button label="Subjects" [routerLink]="['/subjects']" icon="pi pi-folder" class="mr-2" text severity="secondary" />
+       
+         @if (user){
+          <button (click)="logout()" pButton label="Logout" icon="pi pi-sign-out" class="w-full" severity="danger" text></button>
         }  
 
         @if(!user){
-            <button (click)="login()"> Login </button>
+          <button (click)="login()" pButton label="Login" icon="pi pi-sign-in" class="w-full" severity="success" text></button>
+          
         }
-      <p-chip [label]="user?.name || 'User'" alt="Avatar image">
-        <img style="border-radius: 50%;" width="32" height="32" [src]="user?.picture ? user?.picture : '/assets/default-avatar.webp'" referrerpolicy="no-referrer" />
-      </p-chip>
 
+    </div>
+
+          
+        </div>
     </ng-template>
 
+
+   <ng-template #footer>
+
+      <p-chip  class="cp" [routerLink]="['/user/profile']" [label]="user?.name || 'User'" alt="Avatar image">
+        <img style="border-radius: 50%;" width="32" height="32" [src]="user?.picture ? user?.picture : '/assets/default-avatar.webp'" referrerpolicy="no-referrer" />
+      </p-chip> 
+   
+  </ng-template>
+
+    
+</p-drawer>
+
+
+
+<p-toolbar>
+    <ng-template #start>
+      <p-button (click)="visible = true" icon="pi pi-bars" />
+    </ng-template>
+
+    <ng-template #end>
+
+            @if (user){
+          <p-button  (click)="showDialog()" label="Show"  label="Subscribe" icon="pi pi-star" badge="{{user.email}}" badgeSeverity="contrast" styleClass="m-0" [outlined]="true" />
+        }  
+
+        @if(!user){
+          <p-button (click)="showDialog()" label="Subscribe" icon="pi pi-star"  badgeSeverity="contrast" styleClass="m-0" [outlined]="true" />
+        
+          
+        }
+ 
+    </ng-template>
 </p-toolbar>
 
+
+<p-dialog
+  header="Credits"
+  [(visible)]="show"
+  [modal]="true"
+  [closable]="true"
+  [dismissableMask]="true"
+  [style]="{ width: '100vw', height: '100vh' }"
+  [contentStyle]="{ padding: '2rem', height: 'calc(100% - 4rem)' }"
+  class="subscription-dialog"
+>
+  <div class="subscription-wrapper">
+    <div class="subscription-grid" [ngClass]="user ? 'logged-in' : 'logged-out'"  >
+
+        <!-- Welcome Bonus (Visible only if not logged in) -->
+      @if(!user){
+      <div class="welcome-logout-wrapper">
+           <p class="not-logged-in-banner">
+        🎁 Sign up now to claim your free 50 AI credits!
+      </p>
+        <div class="subscription-card welcome-pack">
+          <div class="icon">
+            <i class="pi pi-gift"></i>
+          </div>
+          <h3>🎉 Welcome Gift</h3>
+          <p class="subtitle">50 Free Credits</p>
+          <p class="price">Just for signing up!</p>
+          <ul>
+            <li> Only available on your first signup</li>
+            <li>Instantly added to your account</li>
+            <li>Use with all AI features</li>
+            <li>No purchase required</li>
+          </ul>
+          <button pButton label="Sign Up to Claim" (click)="login()" class="p-button-success w-full mt-3"></button>
+        </div>
+      </div>
+      }  @else {
+          <div class="subscription-grid cards-3">
+        <!-- Basic Pack -->
+      <div class="subscription-card small-pack" (click)="buyCredits(50)">
+        <div class="icon">
+          <i class="pi pi-wallet"></i>
+        </div>
+        <h3>Basic Pack</h3>
+        <p class="subtitle">50 Credits</p>
+        <p class="price">$4.99</p>
+        <ul>
+          <li>Create 1 lesson (up to 100 pages)</li>
+          <li>Basic templates included</li>
+          <li>Valid for 30 days</li>
+        </ul>
+        <button pButton label="Buy Now" class="buy-btn pulse w-full mt-3"></button>
+      </div>
+
+      <!-- Standard Pack -->
+      <div class="subscription-card medium-pack" (click)="buyCredits(120)">
+        <div class="icon">
+          <i class="pi pi-wallet"></i>
+        </div>
+        <h3>Standard Pack</h3>
+        <p class="subtitle">120 Credits</p>
+        <p class="price">$9.99</p>
+        <ul>
+          <li>Create 3 lessons (up to 150 pages each)</li>
+          <li>Premium AI tools</li>
+          <li>Priority support</li>
+          <li>Valid for 60 days</li>
+        </ul>
+        <button pButton label="Buy Now" class="buy-btn pulse w-full mt-3"></button>
+      </div>
+
+      <!-- Premium Pack -->
+      <div class="subscription-card large-pack" (click)="buyCredits(300)">
+        <div class="icon">
+          <i class="pi pi-wallet"></i>
+        </div>
+        <h3>Premium Pack</h3>
+        <p class="subtitle">300 Credits</p>
+        <p class="price">$19.99</p>
+        <ul>
+          <li>Unlimited lessons (up to 300 pages each)</li>
+          <li>All features & AI templates</li>
+          <li>24/7 VIP support</li>
+          <li>Valid for 90 days</li>
+        </ul>
+        <button pButton label="Buy Now" class="buy-btn pulse w-full mt-3"></button>
+      </div>
+
+  </div>
+      }
+
+
+    
+
+    </div>
+  </div>
+</p-dialog>

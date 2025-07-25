@@ -1,0 +1,24 @@
+<h2 class="test-heading">Generated Tests</h2>
+
+<div class="search-bar-wrapper">
+  <span class="p-input-icon-left">
+    <i class="pi pi-search"></i>
+    <input
+      type="text"
+      class="quiz-search"
+      placeholder="Search by ID or date..."
+      [(ngModel)]="searchQuiz"
+    />
+  </span>
+</div>
+
+<div class="quiz-grid">
+  @for (q of filterQuiz; track q.id) {
+    <div class="quiz-card" [routerLink]="['/quiz', q.id]">
+      <div class="quiz-card-content">
+        <h3>Test {{ q.id }}</h3>
+        <p class="quiz-date">Date: {{ q.date | date: 'medium' }}</p>
+      </div>
+    </div>
+  }
+</div>

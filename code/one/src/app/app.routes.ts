@@ -8,6 +8,9 @@ import { NotFoundComponent } from './not-found/not-found.component';
 import { autoLoginPartialRoutesGuard } from 'angular-auth-oidc-client';
 import { QuitzComponent } from './quitz/quitz.component';
 import { TestComponent } from './test/test.component';
+import { AllQuitzComponent } from './all-quitz/all-quitz.component';
+import { UserProfileComponent } from './user-profile/user-profile.component';
+import { SubscribeComponent } from './subscribe/subscribe.component';
 
 export const routes: Routes = [
 
@@ -18,6 +21,9 @@ export const routes: Routes = [
 {path:"lesson/:id", component: LessonIdComponent, canActivate: [autoLoginPartialRoutesGuard],},
 {path:"test", component: TestComponent, canActivate: [autoLoginPartialRoutesGuard],},
 {path:"quiz/:id", component: QuitzComponent, canActivate: [autoLoginPartialRoutesGuard],},
+{path:"quizAll/:subjectId", component: AllQuitzComponent, canActivate: [autoLoginPartialRoutesGuard],},
+{path:"user/profile", component: UserProfileComponent, canActivate: [autoLoginPartialRoutesGuard],},
+{path:"subscribe", component: SubscribeComponent, canActivate: [autoLoginPartialRoutesGuard],},
 
 
 {path: '**' , component: NotFoundComponent},

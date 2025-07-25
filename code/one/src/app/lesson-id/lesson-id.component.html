@@ -6,9 +6,20 @@
 <div class="card">
     <p-panel [toggleable]="true">
         <ng-template #header>
-            <div class="flex items-center gap-2">
-                <span class="font-bold">{{lesson.title}}</span> - <span> {{lesson.durationMinutes}}minutes</span>
+            <div style="display: flex;flex-direction: column;align-items: center; width: 100%;">
+               <div>
+                 <span class="font-bold">{{lesson.title}}</span> - <span> {{lesson.durationMinutes}}minutes</span>
+               </div>
+
+             <div style="display: flex; flex-direction: row; gap: 10px;">
+                 <p>Mark as done:</p>
+                 @if(lesson){
+          <p-togglebutton [(ngModel)]="lesson!.done"   [onIcon]="'pi pi-check'" [offIcon]="'pi pi-times'" class="ng-invalid ng-dirty" styleClass="w-full sm:w-40" aria-label="Confirmation" />
+                 }
+             
             </div>
+            </div>
+
         </ng-template>
 
         @if(lesson){
@@ -22,48 +33,22 @@
 <p-accordion>
     <p-accordion-panel  value="0">
         <p-accordion-header>
-            <div style="display: flex; flex-direction: row; align-items: center; justify-content: space-between; width: 100%;" >
-                <p> If you want to see the hole lesson. Click here...</p>
-                 <p-button (click)="downloadLesson()" label="Download lesson" />
-            </div>
-           </p-accordion-header>
-        <p-accordion-content>
-               @if(lesson){
-          <p-editor [(ngModel)]="lesson!.content" />
-        }
-        </p-accordion-content>
-
-    </p-accordion-panel>
-
-</p-accordion>
-
-
-    <div>
-        
-     
-            <div>
-                 <p>Mark as done:</p>
-                 @if(lesson){
-          <p-togglebutton  [(ngModel)]="lesson!.done"  [onIcon]="'pi pi-check'" [offIcon]="'pi pi-times'" class="ng-invalid ng-dirty" styleClass="w-full sm:w-40" aria-label="Confirmation" />
-                 }
-             
-            </div>
+            <div style="display: flex;flex-direction: column; align-items: center; width: 100%;">
+                    <p> If you want to see the hole lesson. Click here...</p>
             
-            <br>
-             <p-button (click)="clickEditButton( )" label="Save Edit" />
-
-             
-          @if(lesson){
+                <div style="display: flex; flex-direction: row; gap: 10px;">
+                    <p-button icon="pi pi-download" (click)="downloadLesson()"  label="Download" />
+                        @if(lesson && isTtsEnabled){
 
 
             @if(!isSpeeching){
-
-            <p-button icon="pi pi-volume-up" [rounded]="true" [outlined]="true"  (click)="clickSpeech()" label="Speech" />
-            <p-button icon="pi pi-play" [rounded]="true" [outlined]="true"  (click)="clickResume()" label="Resume" />
+            <p-button icon="pi pi-volume-up" (click)="clickSpeech()" label="Speech"/>
+             <p-button icon="pi pi-play"  (click)="clickResume()" label="Resume" />
+            
         
             } @else {
-             <p-button icon="pi pi-stop" [rounded]="true" [outlined]="true" (click)="stopSpeech()" label="Stop"/>
-             <p-button icon="pi pi-pause-circle" [rounded]="true" [outlined]="true" (click)="clickPause()" label="Pause"/>
+             <p-button icon="pi pi-stop" (click)="stopSpeech()" label="Stop"/>
+             <p-button icon="pi pi-pause-circle" (click)="clickPause()" label="Pause"/>
                
               
                    
@@ -77,7 +62,27 @@
 
               
           }
-        
+
+                </div>
+
+            </div>
+            
+           
+           </p-accordion-header>
+        <p-accordion-content>
+               @if(lesson){
+          <p-editor [(ngModel)]="lesson!.content" />
+        }
+        </p-accordion-content>
+
+    </p-accordion-panel>
+
+</p-accordion>
+
+
+    <div style="width: 100%; display: flex; justify-content: center; margin-top: 20px;">
+            <br>
+             <p-button (click)="clickEditButton( )" label="Save Edit" />
     </div>
 
 </div>

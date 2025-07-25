@@ -1,73 +1,28 @@
+<div class="quiz-header">
+  @if(allDone) {
+    <div class="quiz-info">
+      <h3>{{subject}}</h3>
+      <a [routerLink]="['/quizAll/' + subjectId]" class="quiz-link">
+        <p>List of quizzes...</p>
+      </a>
+    </div>
 
+    <button
+      class="flash-button"
+      (click)="clickquiz()"
+      [disabled]="loading"
+      pButton
+      label="TEST HERE !!!">
+    </button>
 
-
-<div>
- <h1 style="text-align: center;" >{{subject}}</h1>
+    @if (loading) {
+      <p-dialog [modal]="true" [(visible)]="visible" [style]="{ width: '50%' }">
+        <div class="loading-spinner">
+          <p-progress-spinner ariaLabel="loading"></p-progress-spinner>
+        </div>
+      </p-dialog>
+    }
+  }
+</div>
 
 <full-calendar [options]="calendarOptions"></full-calendar>
-
-@if(allDone){
-    
-<div style="width: 100%; display: flex; justify-content: end; padding: 20px;">
-    <div class="card flex justify-center">
-    <p-button (click)="clickquiz()" [disabled]="loading" label="Make a TEST!!!" />
-    <p-dialog [modal]="true" [(visible)]="visible" [style]="{ width: '50%' }">
-
-@if (loading) {
-    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%;">
-    <p-progress-spinner ariaLabel="loading" />
-    </div>
-} 
-
-      
-    </p-dialog>
-</div>
-</div>
-
-
-
-}
-
-
-
-
-
-
-<p-accordion>
-    <p-accordion-panel value="0">
-        <p-accordion-header>Click here to have all the test generate...</p-accordion-header>
-        <p-accordion-content>
-        
-              <p class="m-0">
-
-
-               @if(allDone){
-         @for(q of quizzes; track q.id){
-
-    <p-listbox [options]="[q]" [routerLink]="['/quiz/' + q.id]"  optionLabel="date" >
-
-    <ng-template let-q pTemplate="item">
-     Test {{ q.id }} - on date: {{ q.date | date: 'medium' }}
-    </ng-template>
-
-    </p-listbox>
-    
-}
-
-}
-            </p>
-          
-        </p-accordion-content>
-    </p-accordion-panel>
-</p-accordion>
-
-
-
-</div>
-
-
-
-
-
-
-
