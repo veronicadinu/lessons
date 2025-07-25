@@ -70,7 +70,7 @@ CREATE TABLE IF NOT EXISTS `photos`(
 `content` longtext,
 `type` varchar(250),
 PRIMARY KEY (`id`),
-FOREIGN KEY (`fileId`) references `subjects`(`id`) on delete cascade on update cascade
+FOREIGN KEY (`subjectId`) references `subjects`(`id`) on delete cascade on update cascade
 
 );
 
