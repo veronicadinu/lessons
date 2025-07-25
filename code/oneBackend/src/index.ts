@@ -29,6 +29,8 @@ import { CreditResponse } from "./models/credit-response";
 // const stripe = new Stripe(process.env.STRIPEPRIVATEKEY as string)
 
 
+const CREDITS_PER_SUBJECT = 100;
+
 
 
 
@@ -339,6 +341,65 @@ app.post(
         return;
       }
 
+
+
+    // Check if user has enough credits
+      const [userCredits]: any = await baza.execute("SELECT * FROM credits WHERE userId=?", [userId]);
+      const currentCredits = userCredits.length > 0 ? userCredits[0].credits : 0; 
+
+      if (currentCredits < CREDITS_PER_SUBJECT) {
+        res.status(400).send({ message: "Not enough credits to add a subject" });
+        return;
+      }
+
+
+
+      const listaFiles: string[] = [];
+
+      const listaPhoto: string[] = []; ///base64 lista photo
+
+      let nrCuvinte = 0;
+
+      if (files && files.length > 0) {
+        for (let f of files) {
+          const stream = frombase64tostream(f);
+
+          const buffer = base64ToUint8Array(f);
+
+          const images = await extractImagesFromPdf(buffer as any);
+
+          const imagesbase64 = images.map((i) => {
+            return i.toString("base64");
+          });
+
+          const text = await getTextFromStream(stream);
+          nrCuvinte = nrCuvinte + text.split(" ").length;
+
+          listaFiles.push(text);
+          listaPhoto.push(...imagesbase64);
+        }
+      }
+
+      nrCuvinte = nrCuvinte + (instructionAi ? instructionAi.split(" ").length : 0);
+      let nrPoze = listaPhoto.length;
+
+      // Validation
+      if (nrCuvinte > 10000) {
+        res.status(400).send({
+          message: "The total number of words in the files exceeds 10,000",
+        });
+        return;
+      }
+
+      if (nrPoze > 10) {
+        res.status(400).send({
+          message: "The total number of photos exceeds 10",
+        });
+        return;
+      }
+
+
+
       const rezultatsubjectId = await baza.execute(
         "INSERT INTO subjects (nameSubject, language, instructionAi, startDate, endDate , timePerDay,  maxLengthLesson, userId, activatedPush, notificationTime, timeZone) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
         [
@@ -358,40 +419,21 @@ app.post(
 
       const subjectId = (rezultatsubjectId[0] as any).insertId;
 
-      const listaFiles: string[] = [];
 
-      const listaPhoto: string[] = []; ///base64 lista photo
-
-      if (files && files.length > 0) {
-        for (let f of files) {
-          const stream = frombase64tostream(f);
-
-          const buffer = base64ToUint8Array(f);
-
-          const images = await extractImagesFromPdf(buffer as any);
-
-          const imagesbase64 = images.map((i) => {
-            return i.toString("base64");
-          });
-
-          const text = await getTextFromStream(stream);
-
-          listaFiles.push(text);
-          listaPhoto.push(...imagesbase64);
-
-          const [resultfileId]: any = await baza.execute(
+        for (let f of listaFiles) {
+          
+          await baza.execute(
             "INSERT INTO files(subjectId, content) VALUES (?,?)",
-            [subjectId, text]
+            [subjectId, f]
           );
+        }
 
-          for (let p of imagesbase64) {
+          for (let p of listaPhoto) {
             await baza.execute(
-              "INSERT INTO photos(fileId, content, type) VALUES (?,?,?)",
-              [resultfileId.insertId, p, ".jpg"]
+              "INSERT INTO photos(subjectId, content, type) VALUES (?,?,?)",
+              [subjectId, p, ".jpg"]
             );
           }
-        }
-      }
 
       //Gemini
 
@@ -458,6 +500,9 @@ app.post(
       const response = await ai.models.generateContent({
         model: "gemini-2.5-flash",
         contents: contents,
+        config: {
+          maxOutputTokens: 3000
+        }
       });
 
       const responseBetter = response
@@ -474,6 +519,10 @@ app.post(
           [subjectId, lesson.title, lesson.duration, lesson.date, null, false]
         );
       }
+
+      // Deduct credits
+      await baza.execute(
+        "UPDATE credits SET credits = ? WHERE userId = ?", [currentCredits - CREDITS_PER_SUBJECT, userId]);
 
       res
         .status(201)
@@ -566,13 +615,12 @@ app.get("/api/lesson/:id", async (req: AuthenticatedRequest, res: Response) => {
 
       const allphotosFiles: Photo[] = [];
 
-      for (let f of file) {
         const [rowsPhoto]: any = await baza.execute(
-          `SELECT * FROM photos WHERE fileId=?`,
-          [f.id]
+          `SELECT * FROM photos WHERE subjectId=?`,
+          [lesson.subjectId]
         );
         allphotosFiles.push(...rowsPhoto);
-      }
+
 
       const contents1: any = [
         {
@@ -623,6 +671,9 @@ app.get("/api/lesson/:id", async (req: AuthenticatedRequest, res: Response) => {
       const resposeAI = ai.models.generateContent({
         model: "gemini-2.5-flash",
         contents: contents1,
+        config: {
+          maxOutputTokens: 10000
+        }
       });
 
       const contents2: any = [
@@ -671,6 +722,9 @@ app.get("/api/lesson/:id", async (req: AuthenticatedRequest, res: Response) => {
       const resposeAiSummery = ai.models.generateContent({
         model: "gemini-2.5-flash",
         contents: contents2,
+        config: {
+          maxOutputTokens: 3000
+        }
       });
 
       const [summaryResponse, contentResponse] = await Promise.all([

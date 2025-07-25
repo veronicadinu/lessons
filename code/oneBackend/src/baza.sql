@@ -66,7 +66,7 @@ FOREIGN KEY (`quizId`) references `quiz`(`id`) on delete cascade on update casca
 
 CREATE TABLE IF NOT EXISTS `photos`(
 `id` int not null auto_increment,
-`fileId` int not null,
+`subjectId` int not null,
 `content` longtext,
 `type` varchar(250),
 PRIMARY KEY (`id`),
