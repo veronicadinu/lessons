@@ -29,7 +29,7 @@ import { CreditResponse } from "./models/credit-response";
 // const stripe = new Stripe(process.env.STRIPEPRIVATEKEY as string)
 
 
-const CREDITS_PER_SUBJECT = 100;
+const CREDITS_PER_SUBJECT = 50;
 
 
 
